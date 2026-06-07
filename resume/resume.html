@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Abhishek Kumar — Resume</title>
+<style>
+  @page { size: A4; margin: 14mm 15mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    font-size: 10.3pt;
+    line-height: 1.4;
+  }
+  a { color: #1a4fa0; text-decoration: none; }
+
+  /* Header */
+  .name { font-size: 23pt; font-weight: 800; letter-spacing: 0.5px; }
+  .title { font-size: 11pt; font-weight: 600; color: #1a4fa0; margin-top: 2px; letter-spacing: 0.3px; text-transform: uppercase; }
+  .contact { margin-top: 7px; font-size: 9.4pt; color: #333; }
+  .contact .sep { color: #aaa; margin: 0 6px; }
+
+  /* Sections */
+  .section { margin-top: 14px; }
+  h2 {
+    font-size: 10.5pt;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #111;
+    border-bottom: 1.5px solid #222;
+    padding-bottom: 3px;
+    margin-bottom: 8px;
+  }
+
+  p.summary { text-align: justify; }
+
+  /* Skills — label + values in normal reading flow */
+  .skill-row { margin-bottom: 4px; padding-left: 138px; text-indent: -138px; }
+  .skill-row b { color: #111; }
+
+  /* Experience — no flex/float, fully linear for ATS */
+  .job { margin-bottom: 10px; }
+  .job:last-child { margin-bottom: 0; }
+  .job-title { font-weight: 700; font-size: 10.7pt; }
+  .job-company { font-weight: 600; color: #1a4fa0; }
+  .job-meta { font-size: 9.3pt; color: #555; font-style: italic; margin-top: 1px; }
+  .job-meta b { color: #333; font-style: normal; }
+
+  ul { list-style: disc; margin: 5px 0 0 0; padding-left: 17px; }
+  li { margin-bottom: 2.5px; padding-left: 2px; }
+
+  .proj-name { font-weight: 700; }
+  .edu-line { font-weight: 700; }
+  .edu-meta { font-size: 9.3pt; color: #555; font-style: italic; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="name">ABHISHEK KUMAR</div>
+    <div class="title">Gen AI Full Stack Developer · React · Next.js · Node.js · LLM / RAG</div>
+    <div class="contact">
+      myselfabhishekthakur@gmail.com<span class="sep">|</span>+91 81269 02247<span class="sep">|</span>Ghaziabad, India
+    </div>
+    <div class="contact">
+      <a href="https://github.com/abhishekkumar">github.com/abhishekkumar</a><span class="sep">|</span><a href="https://www.linkedin.com/in/abhishek-thakur-114846">linkedin.com/in/abhishek-thakur-114846</a><span class="sep">|</span><a href="https://abhishekkumar.github.io">abhishekkumar.github.io</a>
+    </div>
+  </header>
+
+  <div class="section">
+    <h2>Professional Summary</h2>
+    <p class="summary">
+      Gen AI Full Stack Developer with 7+ years building scalable React/Next.js and Node.js applications, now focused
+      on integrating LLM and RAG features into production. At R Systems and Genaquarios, delivered enterprise systems
+      for Station Casinos serving 50,000+ users — owning features end to end and cutting page loads ~40%. Strong across
+      the React ecosystem, microservice backends, and CI/CD, with a track record of shipping reliable, AI-powered products.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Technical Skills</h2>
+    <div class="skill-row"><b>Languages:</b> JavaScript, TypeScript, HTML5, CSS3, SQL, PHP</div>
+    <div class="skill-row"><b>Frontend:</b> React.js, Next.js, Redux, Tailwind CSS, Material UI, Bootstrap, Sass/SCSS, Responsive Design</div>
+    <div class="skill-row"><b>Backend:</b> Node.js, NestJS, REST APIs, GraphQL, Microservices, MongoDB, MySQL, RabbitMQ</div>
+    <div class="skill-row"><b>Tools &amp; Practices:</b> Git, Azure DevOps, CI/CD, Jest, Postman, Stoplight, APIM, Agile/Scrum, Code Review</div>
+    <div class="skill-row"><b>Generative AI:</b> LLM Integration, RAG, Prompt Engineering, AI Feature Development, GitHub Copilot, ChatGPT</div>
+  </div>
+
+  <div class="section">
+    <h2>Professional Experience</h2>
+
+    <div class="job">
+      <div><span class="job-title">Full Stack Developer (Gen AI)</span> — <span class="job-company">Genaquarios</span></div>
+      <div class="job-meta">Remote · Freelancer → Full-time (Feb 2026) · <b>Oct 2025 – Present</b></div>
+      <ul>
+        <li>Design and ship Generative AI features using LLM and RAG pipelines, automating repetitive workflows and reducing manual effort by ~35%.</li>
+        <li>Lead continued development of the Station Casinos Labor System following its migration from R Systems, ensuring uninterrupted functionality and ongoing feature delivery.</li>
+        <li>Build and maintain full-stack web applications with React.js, Next.js, and Node.js — creating reusable UI components and integrating REST APIs.</li>
+        <li>Design data flows for workforce scheduling and labour-volume tracking, and optimize application performance.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div><span class="job-title">Software Developer</span> — <span class="job-company">R Systems</span></div>
+      <div class="job-meta">Noida, India · <b>Dec 2021 – Oct 2025</b></div>
+      <ul>
+        <li>Developed scalable, reusable UI components with React.js and Next.js for enterprise casino management systems serving 50,000+ users.</li>
+        <li>Cut initial page load by ~40% by implementing Next.js server-side rendering and code-splitting across core dashboards.</li>
+        <li>Designed and built backend services and microservices with Node.js and NestJS, reducing average API response times by ~30% through query optimization and caching.</li>
+        <li>Implemented authentication, data validation, and API error handling, improving reliability and security across services.</li>
+        <li>Established CI/CD pipelines in Azure DevOps to automate build, test, and deployment, shortening release cycles.</li>
+        <li>Raised code reliability by writing Jest unit and integration tests (~80% coverage) and enforcing ESLint/Prettier standards.</li>
+        <li>Partnered with product managers, designers, and QA in Agile sprints to ship production-ready features.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div><span class="job-title">Front End Developer</span> — <span class="job-company">K-12 Learning Solutions</span></div>
+      <div class="job-meta">Remote · <b>Feb 2021 – Nov 2021</b></div>
+      <ul>
+        <li>Built responsive user interfaces with React.js, HTML5, CSS3, and JavaScript using a reusable component architecture.</li>
+        <li>Implemented dynamic data rendering and REST API integration, and optimized React rendering to improve performance and UX.</li>
+        <li>Ensured cross-browser compatibility and responsive design across devices in collaboration with backend developers.</li>
+      </ul>
+    </div>
+
+    <div class="job">
+      <div><span class="job-title">Junior Front End Developer</span> — <span class="job-company">Virtual Employee</span></div>
+      <div class="job-meta">Noida, India · <b>Mar 2019 – Jan 2021</b></div>
+      <ul>
+        <li>Developed responsive front-end layouts from design mockups using HTML, CSS, JavaScript, and SCSS.</li>
+        <li>Customized WordPress themes and built dynamic content pages with PHP, and managed source code with Git.</li>
+        <li>Improved page stability and performance through manual testing and JavaScript optimization across browsers and devices.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <h2>Key Project</h2>
+    <div class="proj-name">Station Casinos — Labor System <span style="font-weight:400;color:#555;">(R Systems → Genaquarios)</span></div>
+    <ul>
+      <li>Enterprise workforce-management platform serving 50,000+ users, handling team availability, schedule creation, and labour-volume tracking, built with React.js, Next.js, Node.js, and NestJS on a microservice architecture.</li>
+      <li>Owned frontend and backend features end to end and ensured seamless continuity through an inter-company migration.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Education</h2>
+    <div class="edu-line">Bachelor of Technology, Computer Science — Uttarakhand Technical University (UTU)</div>
+    <div class="edu-meta">Dehradun, India · 2013 – 2017</div>
+  </div>
+
+</body>
+</html>

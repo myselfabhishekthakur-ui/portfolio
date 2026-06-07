@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+body {
+  @apply bg-white text-ink antialiased;
+}
+
+::selection {
+  @apply bg-ink/10;
+}
+
+@layer components {
+  /* Eyebrow above the big section titles */
+  .eyebrow {
+    @apply text-center text-xs font-semibold uppercase tracking-[0.3em] text-muted;
+  }
+  /* Big bold display heading, e.g. "Work Experience" */
+  .display-title {
+    @apply text-center text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl md:text-7xl;
+  }
+}
+
+/* Seamless hero name marquee */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 24s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
