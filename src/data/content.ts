@@ -246,7 +246,7 @@ export const skills: SkillGroup[] = [
 
 export const socials = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/abhishek-thakur-114846" },
-  { label: "GitHub", href: "https://github.com/abhishekkumar" },
+  { label: "GitHub", href: "https://github.com/myselfabhishekthakur-ui" },
 ];
 
 export const footerLinks = [
