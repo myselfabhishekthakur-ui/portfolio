@@ -34,7 +34,7 @@ export const nav = [
 
 export const about = {
   paragraph:
-    "I'm a Full Stack Developer with 6+ years of experience building scalable web applications, with strong expertise in React.js, Next.js, and modern frontend architecture. I develop high-performance UI components and integrate them with robust backend services built using Node.js and NestJS. I spent almost four years across R Systems and Genaquarios contributing to enterprise-grade systems for Station Casinos — building both frontend applications and backend APIs. Skilled across the React ecosystem, API integrations, performance optimization, and microservice-based backend development, I thrive in Agile teams, collaborating with designers, backend engineers, and product stakeholders to deliver reliable, scalable solutions. I'm currently exploring Generative AI and integrating LLM/RAG-based features into modern applications.",
+    "I'm a Full Stack Developer with 6+ years of experience building scalable web applications, with strong expertise in React.js, Next.js, and modern frontend architecture. I develop high-performance UI components and integrate them with robust backend services built using Node.js and NestJS. I spent almost four years across R Systems and GenAquarius contributing to enterprise-grade systems for Station Casinos — building both frontend applications and backend APIs. Skilled across the React ecosystem, API integrations, performance optimization, and microservice-based backend development, I thrive in Agile teams, collaborating with designers, backend engineers, and product stakeholders to deliver reliable, scalable solutions. I'm currently exploring Generative AI and integrating LLM/RAG-based features into modern applications.",
 };
 
 export type Experience = {
@@ -50,7 +50,7 @@ export type Experience = {
 export const experience: Experience[] = [
   {
     role: "Full Stack Developer (Gen AI)",
-    company: "Genaquarios",
+    company: "GenAquarius",
     period: "Oct 2025 — Mar 2026",
     description:
       "Continued the Station Casinos Labor System after its migration from R Systems, ensuring smooth functionality and ongoing feature development. Built web apps with React.js and Next.js, integrated REST APIs, and explored Generative AI — integrating LLM/RAG-based features into applications.",
@@ -116,7 +116,7 @@ export const projects: Project[] = [
       { value: "Enterprise", label: "SCALE" },
     ],
     overview:
-      "An enterprise Labor System that manages team availability, schedule creation, and labour-data volume tracking for workforce planning. I built and maintained the platform across its migration from R Systems to Genaquarios, ensuring continuity of features and reliability.",
+      "An enterprise Labor System that manages team availability, schedule creation, and labour-data volume tracking for workforce planning. I built and maintained the platform across its migration from R Systems to GenAquarius, ensuring continuity of features and reliability.",
     problem:
       "Casino operations require dependable workforce planning across large teams. The Labor System centralizes availability, scheduling and labour-volume tracking into a single, performant interface.",
     features: [
@@ -132,7 +132,7 @@ export const projects: Project[] = [
     },
     challenges: [
       {
-        challenge: "Maintaining functionality through a company migration (R Systems → Genaquarios)",
+        challenge: "Maintaining functionality through a company migration (R Systems → GenAquarius)",
         solution: "Ensured a smooth handover with thorough documentation, tests, and continued feature development.",
       },
       {
