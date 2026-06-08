@@ -40,6 +40,7 @@
 
   /* Experience — no flex/float, fully linear for ATS */
   .job { margin-bottom: 10px; }
+  .job.page-start { break-before: page; page-break-before: always; }
   .job:last-child { margin-bottom: 0; }
   .job-title { font-weight: 700; font-size: 10.7pt; }
   .job-company { font-weight: 600; color: #1a4fa0; }
@@ -114,7 +115,7 @@
       </ul>
     </div>
 
-    <div class="job">
+    <div class="job page-start">
       <div><span class="job-title">Front End Developer</span> — <span class="job-company">K-12 Learning Solutions</span></div>
       <div class="job-meta">Remote · <b>Feb 2021 – Nov 2021</b></div>
       <ul>
