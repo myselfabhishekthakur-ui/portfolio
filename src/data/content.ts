@@ -51,7 +51,7 @@ export const experience: Experience[] = [
   {
     role: "Full Stack Developer (Gen AI)",
     company: "GenAquarius",
-    period: "Oct 2025 — Mar 2026",
+    period: "Nov 2025 — Mar 2026",
     description:
       "Continued the Station Casinos Labor System after its migration from R Systems, ensuring smooth functionality and ongoing feature development. Built web apps with React.js and Next.js, integrated REST APIs, and explored Generative AI — integrating LLM/RAG-based features into applications.",
     badge: "G",
