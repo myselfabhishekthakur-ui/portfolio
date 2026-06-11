@@ -211,6 +211,7 @@ export const skills: SkillGroup[] = [
     items: [
       { name: "React", icon: icon("react") },
       { name: "Next.js", icon: icon("nextjs") },
+      { name: "Vue.js", icon: icon("vuejs") },
       { name: "Tailwind", icon: icon("tailwindcss") },
       { name: "Material UI", icon: icon("materialui") },
       { name: "Bootstrap", icon: icon("bootstrap") },
@@ -224,6 +225,7 @@ export const skills: SkillGroup[] = [
       { name: "Node.js", icon: icon("nodejs") },
       { name: "NestJS", icon: icon("nestjs") },
       { name: "MongoDB", icon: icon("mongodb") },
+      { name: "PostgreSQL", icon: icon("postgresql") },
       { name: "GraphQL", icon: icon("graphql", "plain") },
       { name: "RabbitMQ", icon: icon("rabbitmq") },
       { name: "REST APIs" },
@@ -235,6 +237,7 @@ export const skills: SkillGroup[] = [
     items: [
       { name: "Git", icon: icon("git") },
       { name: "Azure DevOps", icon: icon("azure") },
+      { name: "GCP", icon: icon("googlecloud") },
       { name: "Postman", icon: icon("postman") },
       { name: "Jest", icon: icon("jest", "plain") },
       { name: "VS Code", icon: icon("vscode") },
