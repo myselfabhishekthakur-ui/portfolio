@@ -237,7 +237,6 @@ export const skills: SkillGroup[] = [
     items: [
       { name: "Git", icon: icon("git") },
       { name: "Azure DevOps", icon: icon("azure") },
-      { name: "GCP", icon: icon("googlecloud") },
       { name: "Postman", icon: icon("postman") },
       { name: "Jest", icon: icon("jest", "plain") },
       { name: "VS Code", icon: icon("vscode") },
