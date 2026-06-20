@@ -1,95 +1,164 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { profile, about, skills, experience, projects } from "@/data/content";
+import { profile } from "@/data/content";
 
 export default function VoiceAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
-  const [transcript, setTranscript] = useState("");
-  const [aiResponse, setAiResponse] = useState("Tap the center orb to talk.");
   const [isMuted, setIsMuted] = useState(false);
-  const [appLang, setAppLang] = useState<"en" | "hi">("en");
   const [browserSupport, setBrowserSupport] = useState({ speechRecognition: true, speechSynthesis: true });
 
   const recognitionRef = useRef<any>(null);
   const synthesisRef = useRef<SpeechSynthesis | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const isOpenRef = useRef(isOpen);
-  const appLangRef = useRef(appLang);
   const isThinkingRef = useRef(isThinking);
   const isSpeakingRef = useRef(isSpeaking);
+  // Tracks detected conversation language across turns so "yes" / "tell me more" replies in the right language
+  const conversationLangRef = useRef<"en" | "hi">("en");
+  // Tracks last discussed topic so "yes" continues correctly
+  const lastTopicRef = useRef<"greeting" | "intro" | "personal" | "skills" | "experience" | "projects" | "contact" | "">("greeting");
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const recognitionTranscriptRef = useRef<string>("");
 
   // Keep refs in sync
-  useEffect(() => {
-    isOpenRef.current = isOpen;
-  }, [isOpen]);
+  useEffect(() => { isOpenRef.current = isOpen; }, [isOpen]);
+  useEffect(() => { isThinkingRef.current = isThinking; }, [isThinking]);
+  useEffect(() => { isSpeakingRef.current = isSpeaking; }, [isSpeaking]);
 
-  useEffect(() => {
-    appLangRef.current = appLang;
-  }, [appLang]);
+  // ─── System Prompt ────────────────────────────────────────────────────────────
+  const systemPrompt = `You are the AI Voice Assistant for Abhishek Kumar's portfolio website.
 
-  useEffect(() => {
-    isThinkingRef.current = isThinking;
-  }, [isThinking]);
+Your primary goal is to answer visitor questions naturally, professionally, and accurately about Abhishek Kumar.
 
-  useEffect(() => {
-    isSpeakingRef.current = isSpeaking;
-  }, [isSpeaking]);
+========================
+ABOUT ABHISHEK KUMAR
+========================
 
-  // System Prompt containing Abhishek's complete professional and personal details from his portfolio & resume
-  const systemPrompt = `You are the AI Voice Assistant for Abhishek Kumar's portfolio website. 
-Here is Abhishek Kumar's complete resume and portfolio details:
+Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience.
 
-Name: Abhishek Kumar
-Role: Gen AI & Full Stack Developer
-Experience: 7 Years of professional software engineering experience.
-Location: Ghaziabad, India
+He specializes in building scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions.
+
+His core expertise includes:
+
+Frontend: React.js, Next.js, Vue.js, Tailwind CSS, Material UI, Bootstrap, Sass/SCSS
+Backend: Node.js, NestJS, REST APIs, GraphQL, RabbitMQ
+Databases: PostgreSQL, MongoDB, MySQL
+Cloud & Tools: Azure DevOps, AWS, Git, Postman, Jest, VS Code
+Generative AI: LLM Applications, RAG Systems, AI Agents, Semantic Search, Document Intelligence
+
+He has experience in: Frontend Development, Backend Development, Full Stack Architecture, Microservices, System Design, Performance Optimization, API Development, Cloud Deployments, Agile Development, Team Collaboration, End-to-End Feature Ownership.
+
+========================
+PROFESSIONAL SUMMARY
+========================
+
+Abhishek Kumar is a Full Stack and Gen AI Developer with 7 years of experience building scalable web applications and enterprise-grade systems. He has worked extensively with React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and modern Generative AI technologies. He has successfully delivered enterprise workforce management systems, modern frontend applications, backend microservices, REST APIs, and AI-powered solutions. He is experienced in designing scalable architectures, optimizing application performance, integrating cloud services, and delivering production-ready applications.
+
+========================
+WORK EXPERIENCE
+========================
+
+1. GenAquarius — Full Stack Developer (Gen AI) | Oct 2025 – Mar 2026
+   - Continued development of Station Casinos Labor System
+   - Built React.js and Next.js applications
+   - Integrated REST APIs
+   - Worked on Generative AI solutions including LLM and RAG-based features
+   - Maintained enterprise applications after migration from R Systems
+
+2. R Systems — Software Developer | Dec 2021 – Oct 2025
+   - End-to-end feature ownership of enterprise casino management systems
+   - React.js and Next.js development with SSR and performance optimization
+   - Node.js and NestJS backend development and microservices architecture
+   - Authentication, authorization, Azure DevOps CI/CD
+   - Unit and integration testing using Jest
+
+3. K-12 Learning Solutions — Front End Developer | Feb 2021 – Nov 2021
+   - React.js development with reusable UI components
+   - Responsive design, REST API integration, cross-browser compatibility
+
+4. Virtual Employee — Junior Front End Developer | Mar 2019 – Jan 2021
+   - HTML, CSS, JavaScript, WordPress customization, PHP development, Responsive layouts
+
+========================
+PROJECTS
+========================
+
+Station Casinos Labor System (2021–2026):
+Enterprise workforce management platform for employee availability management, schedule creation, workforce planning, and labor-volume tracking.
+Features: Team Availability Management, Schedule Creation, Workforce Planning, Labor Data Tracking, Performance Optimization, SSR
+Technology: React.js, Next.js, Node.js, NestJS, MongoDB, MySQL, REST APIs
+Challenges: Migration from R Systems to GenAquarius, handling large workforce datasets, performance optimization
+Solutions: Optimized React rendering, improved state management, implemented Next.js SSR, ensured smooth platform migration
+
+K-12 Learning Platform (2021):
+Responsive e-learning platform built using React.js with reusable components, dynamic rendering, REST API integration.
+Technology: React.js, JavaScript, HTML5, CSS3
+
+========================
+PERSONAL INTERESTS & EXTRACURRICULAR ACTIVITIES
+========================
+(ONLY share when explicitly asked by the user)
+
+Outside of software engineering, Abhishek is passionate about music, travelling, and adventure. Music has been an important part of his life for many years, and he enjoys singing and playing guitar in his free time. He has participated in musical performances, band activities, and reality-show auditions, including platforms such as Indian Idol and Sa Re Ga Ma Pa. Beyond music, he enjoys exploring mountain destinations, scenic routes, and new cultures. Uttarakhand, including places such as Almora and other hill regions, is among his favorite travel destinations. He enjoys: Travelling, Riding, Road Trips, Nature Exploration, Guitar, Singing, Adventure Activities. These experiences help him stay creative, energetic, and maintain a healthy work-life balance.
+
+========================
+CONTACT INFORMATION
+========================
 Email: myselfabhishekthakur@gmail.com
 Phone: +91 81269 02247
+Location: Ghaziabad, India
+LinkedIn: https://www.linkedin.com/in/abhishek-kumar-thakur-114846171/
+GitHub: https://github.com/myselfabhishekthakur-ui
 
-Work History:
-1. GenAquarius (Oct 2025 — Mar 2026) | Full Stack Developer (Gen AI)
-   - Continued feature development for Station Casinos Labor System.
-   - Built React.js & Next.js apps, integrated REST APIs, and built Generative AI (LLM/RAG) integrations.
-2. R Systems (Dec 2021 — Oct 2025) | Software Developer
-   - Owned end-to-end delivery of casino management platforms.
-   - Built Next.js/React UI (SSR & Performance optimized).
-   - Designed Node.js & NestJS backend microservices, REST APIs, auth, Jest testing, and Azure DevOps CI/CD.
-3. K-12 Learning Solutions (Feb 2021 — Nov 2021) | Front End Developer
-   - Responsive UI using React, HTML5, CSS3, JavaScript. REST API integration.
-4. Virtual Employee (Mar 2019 — Jan 2021) | Junior Front End Developer
-   - Frontend layouts (HTML, CSS, JS, WordPress, PHP).
+========================
+BEHAVIOR RULES
+========================
 
-Projects:
-1. Station Casinos Labor System (2021 — 2026)
-   - Overview: Workforce management system tracking availability, schedule creation, and labor-volume data.
-   - Tech: React, Next.js, Node.js, NestJS, Material UI, MongoDB, MySQL.
-   - Challenges & Solutions: Maintained operations during R Systems → GenAquarius transition; optimized NestJS microservices and Next.js SSR to handle huge datasets.
-   - Learnings: Owning enterprise Agile features; NestJS microservices.
-2. K-12 Learning Platform (2021)
-   - Overview: E-learning responsive interface built in React integrating REST APIs.
-   - Tech: React, HTML5/CSS3, JavaScript, REST APIs.
+RULE 1 — STRICT SEPARATION:
+Never mix Professional Introduction and Personal Interests in the same answer unless the user explicitly asks for both.
 
-Skills Inventory:
-- Languages: JavaScript, PHP, HTML/CSS, MySQL.
-- Frontend: React, Next.js, Vue.js, Tailwind, Material UI, Bootstrap, Sass/SCSS.
-- Backend: Node.js, NestJS, MongoDB, PostgreSQL, GraphQL, RabbitMQ, REST APIs.
-- Tools: Git, Azure DevOps, AWS, Postman, Jest, VS Code, ChatGPT/Copilot, Gen AI (LLM/RAG).
+RULE 2 — PROFESSIONAL INTRODUCTION:
+When a user asks: "Who is Abhishek?", "Tell me about Abhishek", "Introduce yourself", "About Abhishek", "Experience", "Career", or "Work history" — ONLY provide professional information. Do NOT mention singing, guitar, Indian Idol, travel, hobbies, or extracurricular activities.
 
-Personal & Extracurricular Activities:
-- Abhishek is an accomplished singer and guitarist who performed on Indian Idol and various other reality shows.
-- He is a passionate traveler who loves mountain road trips and exploring new scenic routes.
+Professional Introduction Template:
+"Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems and enterprise applications used by thousands of users."
 
-Rules:
-1. Answer short (1-2 sentences max) so it reads and speaks nicely.
-2. Respond in the user's language (Hindi for Hindi/Hinglish queries, English for English).
-3. If they ask about Abhishek generally or his introduction/resume, give a professional background summary and ALWAYS conclude by asking: "Would you like to know more about Abhishek's personal interests and extracurricular activities outside of the IT sector?" (or "क्या आप आईटी सेक्टर के अलावा अभिषेक के पर्सनल इंटरेस्ट्स और एक्स्ट्रा करिकुलर एक्टिविटीज़ के बारे में जानना चाहेंगे?" in Hindi).
-4. If they say "yes" (or ask about his personal interests/extracurricular activities/music/guitar/Indian Idol/travel), tell them about his singing, guitar, Indian Idol shows, and travel, and ALWAYS conclude by asking: "Would you like to hear about his software engineering career?" (or "क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में जानना चाहेंगे?" in Hindi).`;
+After professional answer ask:
+English: "Would you like to know about Abhishek's personal interests and achievements outside the IT industry?"
+Hindi: "क्या आप आईटी इंडस्ट्री के बाहर अभिषेक की पर्सनल रुचियों और उपलब्धियों के बारे में जानना चाहेंगे?"
 
-  // Initialize Speech APIs
+RULE 3 — PERSONAL INTERESTS (only when explicitly asked):
+ONLY discuss personal interests when the user explicitly asks about: hobbies, personal life, extracurricular, interests, music, singing, guitar, Indian Idol, Sa Re Ga Ma Pa, travel, travelling, passion — OR says "yes" or "haan" after the follow-up question.
+
+Personal Interests Template:
+"Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle alongside his software engineering career."
+
+After personal interests answer ask:
+English: "Would you like to hear about his software engineering career and technical expertise?"
+Hindi: "क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर और तकनीकी विशेषज्ञता के बारे में जानना चाहेंगे?"
+
+RULE 4 — ANSWER DEPTH:
+For introduction questions: provide detailed answers (5-8 sentences), NOT 1-2 sentences.
+For skills questions: explain Frontend Skills, Backend Skills, Cloud, Databases, AI/GenAI in detail.
+For experience questions: explain total years, company names, responsibilities, major achievements, technologies used.
+
+RULE 5 — LANGUAGE:
+Always answer in the language the visitor uses. Hindi/Hinglish → respond in Hindi. English → respond in English.
+
+RULE 6 — CONVERSATION CONTINUITY:
+If the user says "yes", "haan", "tell me more", or "continue" — continue from the previous topic naturally without restarting.
+
+RULE 7 — IDENTITY:
+Never say you are an AI model from OpenAI. Behave as Abhishek's personal portfolio assistant. Answer naturally as if speaking to a visitor on Abhishek's portfolio website.
+
+RULE 8 — CRITICAL RESTRICTION:
+Do NOT automatically talk about singing, guitar, Indian Idol, travel, or personal life until the visitor explicitly asks or says "yes" after being prompted.`;
+
+  // ─── Speech Init ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (typeof window !== "undefined") {
       synthesisRef.current = window.speechSynthesis;
@@ -101,50 +170,61 @@ Rules:
         setBrowserSupport((prev) => ({ ...prev, speechRecognition: false }));
       } else {
         const rec = new SpeechRecognition();
-        rec.continuous = false;
-        rec.interimResults = false;
-        rec.lang = "en-IN"; // Handles Indian English and Hinglish accents beautifully
+        // Enable continuous and interimResults for custom silence/pause detection
+        rec.continuous = true;
+        rec.interimResults = true;
+        // Use en-IN as base — browser auto-detects Hindi Devanagari script too
+        rec.lang = "en-IN";
 
         rec.onstart = () => {
           setIsListening(true);
           setIsThinking(false);
           setIsSpeaking(false);
-          setTranscript("");
-          setAiResponse(appLangRef.current === "hi" ? "सुन रहा हूँ..." : "Listening...");
         };
 
         rec.onresult = (event: any) => {
-          const resultText = event.results[0][0].transcript;
-          setTranscript(resultText);
-          setIsListening(false);
-          setIsThinking(true);
-          setAiResponse(appLangRef.current === "hi" ? "सोच रहा हूँ..." : "Thinking...");
-          setTimeout(() => {
-            handleQuestion(resultText);
-          }, 800);
+          if (silenceTimeoutRef.current) {
+            clearTimeout(silenceTimeoutRef.current);
+          }
+
+          let accumulated = "";
+          for (let i = 0; i < event.results.length; i++) {
+            accumulated += event.results[i][0].transcript + " ";
+          }
+          accumulated = accumulated.trim();
+
+          if (accumulated) {
+            recognitionTranscriptRef.current = accumulated;
+          }
+
+          // Silence detection: wait 1.6 seconds after user pauses to determine they're done speaking.
+          // This allows natural speech pauses, thinking time, and correct turn completion.
+          silenceTimeoutRef.current = setTimeout(() => {
+            if (recognitionTranscriptRef.current) {
+              const finalQuery = recognitionTranscriptRef.current;
+              recognitionTranscriptRef.current = "";
+              setIsListening(false);
+              setIsThinking(true);
+
+              try {
+                rec.stop();
+              } catch (e) {
+                console.error("Failed to stop recognition on silence:", e);
+              }
+
+              handleQuestion(finalQuery);
+            }
+          }, 1600);
         };
 
         rec.onerror = (event: any) => {
           console.error("Speech recognition error:", event.error);
           setIsListening(false);
           setIsThinking(false);
-          if (event.error === "not-allowed") {
-            setTranscript(appLangRef.current === "hi" ? "माइक परमिशन की आवश्यकता है।" : "Microphone permission denied.");
-            setAiResponse(appLangRef.current === "hi" ? "कृपया अपने ब्राउज़र में माइक परमिशन चालू करें।" : "Please allow microphone access in your browser settings.");
-          } else {
-            setTranscript("");
-            setAiResponse(appLangRef.current === "hi" ? "बोलने के लिए माइक दबाएं।" : "Tap the center orb to talk.");
-          }
         };
 
         rec.onend = () => {
           setIsListening(false);
-          // If we finished listening and are completely idle (not thinking/speaking), reset to prompt
-          setTimeout(() => {
-            if (isOpenRef.current && !synthesisRef.current?.speaking && !isThinkingRef.current) {
-              setAiResponse(appLangRef.current === "hi" ? "बोलने के लिए माइक दबाएं।" : "Tap the center orb to talk.");
-            }
-          }, 200);
         };
 
         recognitionRef.current = rec;
@@ -159,95 +239,211 @@ Rules:
       if (synthesisRef.current) {
         synthesisRef.current.cancel();
       }
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+      }
     };
   }, []);
 
-  // Stop speaking when panel opens/closes
+  // ─── Greeting on Open ─────────────────────────────────────────────────────────
   useEffect(() => {
     stopSpeaking();
     if (isOpen) {
       setIsThinking(true);
-      setTranscript("");
-      setAiResponse(appLang === "hi" ? "कनेक्ट हो रहा है..." : "Connecting...");
+      lastTopicRef.current = "greeting"; // Reset to greeting on session start
       setTimeout(() => {
         setIsThinking(false);
-        const greeting = appLang === "hi" 
-          ? `नमस्ते! मैं अभिषेक का वॉइस असिस्टेंट हूँ। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में जानना चाहते हैं?` 
-          : `Hi! I'm Abhishek's Voice Assistant. Would you like to hear about his software engineering career?`;
-        setAiResponse(greeting);
+        const greeting = `Hi! I'm Abhishek's Voice Assistant. Would you like to hear about his software engineering career?`;
         speakText(greeting);
       }, 600);
     }
   }, [isOpen]);
 
+  // ─── Known male voice names to EXCLUDE ─────────────────────────────────────
+  const MALE_VOICE_NAMES = [
+    "Rishi", "Daniel", "Alex", "Fred", "Tom", "Oliver", "Aaron",
+    "Albert", "Arthur", "Bruce", "Gordon", "Jacques", "Ralph", "Junior"
+  ];
+
+  const isFemaleVoice = (v: SpeechSynthesisVoice): boolean => {
+    return !MALE_VOICE_NAMES.some((male) => v.name.includes(male));
+  };
+
+  // ─── speakText ────────────────────────────────────────────────────────────────
+  // Speaks in small chunks to prevent long-text hesitation/buffering pauses.
+  // Uses ONLY female voices for clear Siri-like delivery.
   const speakText = (text: string) => {
     if (!synthesisRef.current || isMuted || !browserSupport.speechSynthesis) return;
 
     stopSpeaking();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utteranceRef.current = utterance;
+    // Auto-detect language from the response text (Devanagari script = Hindi)
+    const isHindiText = /[\u0900-\u097F]/.test(text);
 
-    // Workaround for browser garbage collection bug where onend fails to fire
-    if (typeof window !== "undefined") {
-      (window as any).activeUtterances = (window as any).activeUtterances || [];
-      (window as any).activeUtterances.push(utterance);
-    }
-
-    // Detect language of response to pick the right voice
-    const isHindiText = /[\u0900-\u097F]/.test(text) || appLang === "hi";
-    utterance.lang = isHindiText ? "hi-IN" : "en-US";
-
+    // ── Select voice ONCE (reused for all chunks) ──
     const voices = synthesisRef.current.getVoices();
-    const voice = isHindiText 
-      ? voices.find((v) => v.lang.startsWith("hi-")) 
-      : voices.find((v) => v.lang.startsWith("en-") && v.name.includes("Google")) || voices.find((v) => v.lang.startsWith("en-"));
+    let selectedVoice: SpeechSynthesisVoice | undefined;
 
-    if (voice) {
-      utterance.voice = voice;
+    // Log all available voices for the target language (debug)
+    const targetLang = isHindiText ? "hi" : "en";
+    console.log(`[VoiceAssistant] Available ${targetLang} voices:`,
+      voices.filter((v) => v.lang.startsWith(targetLang)).map((v) => `${v.name} (${v.lang}, local=${v.localService})`)
+    );
+
+    if (isHindiText) {
+      selectedVoice =
+        // 1. Lekha — Apple premium female Hindi voice (LOCAL, no buffering)
+        voices.find((v) => v.lang.startsWith("hi-") && v.name.includes("Lekha")) ||
+        // 2. Any LOCAL female Hindi voice (offline = no hesitation)
+        voices.find((v) => v.lang.startsWith("hi-") && v.localService && isFemaleVoice(v)) ||
+        // 3. Any LOCAL Hindi voice (even male is better than network buffering)
+        voices.find((v) => v.lang.startsWith("hi-") && v.localService) ||
+        // 4. Google Hindi (network voice — last resort, may buffer)
+        voices.find((v) => v.lang === "hi-IN" && v.name.includes("Google")) ||
+        // 5. Any Hindi voice
+        voices.find((v) => v.lang.startsWith("hi-") && isFemaleVoice(v)) ||
+        voices.find((v) => v.lang.startsWith("hi-"));
+    } else {
+      selectedVoice =
+        // 1. Siri Female en-IN (best: Indian English Siri woman)
+        voices.find((v) => v.lang.startsWith("en-IN") && v.name.includes("Siri") && isFemaleVoice(v)) ||
+        // 2. Veena — Apple female en-IN
+        voices.find((v) => v.lang.startsWith("en-IN") && v.name.includes("Veena")) ||
+        // 3. Siri Female en-GB (UK Siri woman — very smooth)
+        voices.find((v) => v.lang.startsWith("en-GB") && v.name.includes("Siri") && isFemaleVoice(v)) ||
+        // 4. Siri Female en-US (US Siri woman)
+        voices.find((v) => v.lang.startsWith("en-US") && v.name.includes("Siri") && isFemaleVoice(v)) ||
+        // 5. Samantha — Apple premium female en-US (extremely clear, like classic Siri)
+        voices.find((v) => v.lang.startsWith("en-US") && v.name.includes("Samantha")) ||
+        // 6. Karen — Apple female en-AU (very clear and natural)
+        voices.find((v) => v.lang.startsWith("en-AU") && v.name.includes("Karen")) ||
+        // 7. Moira — Apple female en-IE
+        voices.find((v) => v.lang.startsWith("en-IE") && v.name.includes("Moira")) ||
+        // 8. Any local female en-IN voice
+        voices.find((v) => v.lang.startsWith("en-IN") && v.localService && isFemaleVoice(v)) ||
+        // 9. Any female en-IN voice
+        voices.find((v) => (v.lang === "en-IN" || v.lang === "en_IN") && isFemaleVoice(v)) ||
+        // 10. Any local female English voice
+        voices.find((v) => v.lang.startsWith("en-") && v.localService && isFemaleVoice(v)) ||
+        // 11. Google US English (female)
+        voices.find((v) => v.lang === "en-US" && v.name === "Google US English") ||
+        // 12. Any female English voice
+        voices.find((v) => v.lang.startsWith("en-") && isFemaleVoice(v)) ||
+        // 13. Last resort: any English voice
+        voices.find((v) => v.lang.startsWith("en-"));
     }
 
-    utterance.onstart = () => {
-      setIsSpeaking(true);
-      setIsThinking(false);
-    };
-    
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      if (typeof window !== "undefined" && (window as any).activeUtterances) {
-        (window as any).activeUtterances = (window as any).activeUtterances.filter((u: any) => u !== utterance);
+    // Log selected voice
+    if (selectedVoice) {
+      console.log(`[VoiceAssistant] Selected voice: "${selectedVoice.name}" (${selectedVoice.lang}, local=${selectedVoice.localService})`);
+    } else {
+      console.warn("[VoiceAssistant] No voice found for", targetLang);
+    }
+
+    // ── Split text into sentence chunks for smooth, natural delivery ──
+    // Do NOT split on commas, as that causes unnatural pauses and hesitation.
+    let chunks: string[];
+    if (isHindiText) {
+      // Split on sentence boundaries: danda (।), question mark (?), exclamation (!), period (.)
+      chunks = text
+        .split(/(?<=[।!?.])\s*/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    } else {
+      chunks = text
+        .split(/(?<=[.!?])\s+/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+    }
+
+    // If splitting produced nothing (no punctuation), use the whole text as one chunk
+    if (chunks.length === 0) {
+      chunks = [text];
+    }
+
+    let currentIndex = 0;
+
+    const speakNext = () => {
+      if (!isOpenRef.current || currentIndex >= chunks.length || !synthesisRef.current) {
+        setIsSpeaking(false);
+        if (typeof window !== "undefined") {
+          (window as any).activeUtterances = [];
+        }
+        // Auto restart listening after all chunks are spoken
+        if (isOpenRef.current && !isMuted) {
+          startListening();
+        }
+        return;
       }
-      if (isOpenRef.current && !isMuted) {
-        startListening();
+
+      const chunk = chunks[currentIndex];
+      currentIndex++;
+
+      const utt = new SpeechSynthesisUtterance(chunk);
+      utteranceRef.current = utt;
+
+      // Prevent browser GC from silently dropping onend
+      if (typeof window !== "undefined") {
+        (window as any).activeUtterances = (window as any).activeUtterances || [];
+        (window as any).activeUtterances.push(utt);
       }
-    };
-    
-    utterance.onerror = () => {
-      setIsSpeaking(false);
-      if (typeof window !== "undefined" && (window as any).activeUtterances) {
-        (window as any).activeUtterances = (window as any).activeUtterances.filter((u: any) => u !== utterance);
+
+      if (selectedVoice) {
+        utt.voice = selectedVoice;
+        utt.lang = selectedVoice.lang;
+      } else {
+        utt.lang = isHindiText ? "hi-IN" : "en-IN";
       }
+
+      // Native 1.0 rate/pitch for maximum clarity — no resampling artifacts
+      utt.rate = 1.0;
+      utt.pitch = 1.0;
+      utt.volume = 1;
+
+      utt.onstart = () => {
+        setIsSpeaking(true);
+        setIsThinking(false);
+      };
+
+      utt.onend = () => {
+        if (typeof window !== "undefined" && (window as any).activeUtterances) {
+          (window as any).activeUtterances = (window as any).activeUtterances.filter((u: any) => u !== utt);
+        }
+        // Speak the next chunk immediately (no gap)
+        speakNext();
+      };
+
+      utt.onerror = () => {
+        setIsSpeaking(false);
+        if (typeof window !== "undefined" && (window as any).activeUtterances) {
+          (window as any).activeUtterances = (window as any).activeUtterances.filter((u: any) => u !== utt);
+        }
+      };
+
+      synthesisRef.current.speak(utt);
     };
 
-    synthesisRef.current.speak(utterance);
+    // Start the chain
+    speakNext();
   };
 
   const stopSpeaking = () => {
-    if (synthesisRef.current) {
-      synthesisRef.current.cancel();
-    }
+    if (synthesisRef.current) synthesisRef.current.cancel();
     setIsSpeaking(false);
   };
 
   const startListening = () => {
     stopSpeaking();
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current);
+    }
+    recognitionTranscriptRef.current = "";
     if (recognitionRef.current) {
       try {
+        recognitionRef.current.lang = conversationLangRef.current === "hi" ? "hi-IN" : "en-IN";
         recognitionRef.current.abort();
         setTimeout(() => {
-          if (isOpenRef.current) {
-            recognitionRef.current.start();
-          }
+          if (isOpenRef.current) recognitionRef.current.start();
         }, 50);
       } catch (e) {
         console.error("Failed to start speech recognition:", e);
@@ -255,152 +451,405 @@ Rules:
     }
   };
 
-
   const stopListening = () => {
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current);
+    }
+    recognitionTranscriptRef.current = "";
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.error("Failed to stop speech recognition:", e);
+      }
     }
   };
 
-  // Call Free Serverless Hugging Face LLM (Qwen 7B) with fallback
+  // ─── Free LLM (Hugging Face Multi-Model Fallback Chain) ──────────────────────
   const fetchLLMResponse = async (userPrompt: string): Promise<string | null> => {
-    const model = "Qwen/Qwen2.5-7B-Instruct";
-    try {
-      const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Accepts a public Hugging Face Read Token if configured, else calls keyless
-          ...(process.env.NEXT_PUBLIC_HF_TOKEN ? { "Authorization": `Bearer ${process.env.NEXT_PUBLIC_HF_TOKEN}` } : {})
-        },
-        body: JSON.stringify({
-          inputs: `<|system|>\n${systemPrompt}\n<|user|>\n${userPrompt}\n<|assistant|>\n`,
-          parameters: { max_new_tokens: 150, temperature: 0.7 }
-        }),
-      });
-      const data = await response.json();
-      if (data && data[0] && data[0].generated_text) {
-        const fullText = data[0].generated_text;
-        const parts = fullText.split("<|assistant|>\n");
-        const answer = parts[parts.length - 1] || fullText;
-        return answer.trim();
+    const models = [
+      "Qwen/Qwen2.5-72B-Instruct",
+      "meta-llama/Meta-Llama-3.1-70B-Instruct",
+      "Qwen/Qwen2.5-7B-Instruct"
+    ];
+
+    for (const model of models) {
+      try {
+        console.log(`[VoiceAssistant] Attempting LLM query with model: ${model}`);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500); // 3.5s timeout for fast responses
+
+        const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(process.env.NEXT_PUBLIC_HF_TOKEN
+              ? { Authorization: `Bearer ${process.env.NEXT_PUBLIC_HF_TOKEN}` }
+              : {}),
+          },
+          body: JSON.stringify({
+            inputs: `<|system|>\n${systemPrompt}\n<|user|>\n${userPrompt}\n<|assistant|>\n`,
+            parameters: { max_new_tokens: 200, temperature: 0.7 },
+          }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          console.warn(`[VoiceAssistant] Model ${model} returned status ${response.status}. Trying next model...`);
+          continue;
+        }
+
+        const data = await response.json();
+        if (data && data[0] && data[0].generated_text) {
+          const fullText = data[0].generated_text;
+          const parts = fullText.split("<|assistant|>\n");
+          const result = (parts[parts.length - 1] || fullText).trim();
+          if (result) {
+            console.log(`[VoiceAssistant] Successfully generated response using model: ${model}`);
+            return result;
+          }
+        }
+      } catch (e: any) {
+        if (e.name === 'AbortError') {
+          console.warn(`[VoiceAssistant] Model ${model} query timed out after 3.5s. Trying next model...`);
+        } else {
+          console.warn(`[VoiceAssistant] Failed to query model ${model}:`, e);
+        }
       }
-    } catch (e) {
-      console.warn("Free LLM API failed/rate-limited. Falling back to local QA:", e);
     }
     return null;
   };
 
-  // Conversational AI Engine supporting English & Hindi Q&A
+  // ─── Local QA Fallback ────────────────────────────────────────────────────────
   const handleQuestion = async (text: string) => {
-    const query = text.toLowerCase().trim();
-    
-    // First, attempt to call the free serverless LLM
-    const llmAnswer = await fetchLLMResponse(text);
-    if (llmAnswer) {
-      setAiResponse(llmAnswer);
+    const cleanQuery = text.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "");
+
+    // ── Language Detection & Consistency ──────────────────────────────────────────
+    const switchToEnglish = 
+      cleanQuery.includes("speak in english") || 
+      cleanQuery.includes("in english") || 
+      cleanQuery.includes("english please") || 
+      cleanQuery.includes("switch to english") || 
+      cleanQuery.includes("english mein") || 
+      cleanQuery === "english" ||
+      cleanQuery.includes("angrezi");
+
+    const switchToHindi = 
+      cleanQuery.includes("speak in hindi") || 
+      cleanQuery.includes("in hindi") || 
+      cleanQuery.includes("hindi please") || 
+      cleanQuery.includes("switch to hindi") || 
+      cleanQuery.includes("hindi mein") || 
+      cleanQuery === "hindi";
+
+    const hasDevanagari = /[\u0900-\u097F]/.test(text);
+    const words = cleanQuery.split(/\s+/);
+    const hasHindiKeyword = words.some(word => [
+      "hindi", "hind", "kaun", "koun", "kon", "kya", "kia", "batao", "bata", "btao", "bataiye", "bataye",
+      "bol", "bolo", "haan", "han", "ha", "haa", "h", "tum", "aap", "ap", "naam", "nam", "kaam", "kam",
+      "safar", "gana", "ghoom", "parichay", "nokri", "sampark", "samajh", "kaise", "हाँ", "हा", "ह", "हाँजी",
+      "ji haan", "ji han", "han ji", "haan ji", "bilkul", "batao", "tell me more"
+    ].includes(word));
+
+    // Pure continuation words (Hindi or English confirmations and their colloquial versions/short combinations)
+    const confirmationWords = [
+      "yes", "yeah", "yup", "sure", "okay", "ok", "haan", "han", "ha", "h", "haa", "ji haan", "ji han", "han ji", "haan ji", "bilkul", "batao", "continue", "tell me more", "more", "go on",
+      "हाँ", "हा", "ह", "हाँजी", "हाँ जी", "जी हाँ", "जी हा", "बिलकुल", "बताओ", "और बताओ", "आगे बताओ", "बताओ", "और", "आगे", "हाँ बताओ",
+      "हां", "हांजी", "हां जी", "जी हां", "जी हां बताओ", "हां बताओ", "जी हांजी", "hang", "hanh", "haah", "he", "high", "hum", "huh", "un", "ahn", "aah", "ah", "home", "how", "who", "ha "
+    ];
+
+    const isContinuationOnly = 
+      confirmationWords.includes(cleanQuery) ||
+      (cleanQuery.split(/\s+/).length <= 2 && words.some(w => [
+        "yes", "yeah", "yup", "sure", "okay", "ok", "haan", "han", "ha", "h", "हाँ", "हां", "batao", "btao", "tell", "sure", "y"
+      ].includes(w)));
+
+    const isNegativeContinuation = [
+      "no", "n", "nahi", "nhi", "nahin", "नहीं", "ना"
+    ].includes(cleanQuery);
+
+    let isHindi: boolean;
+    if (switchToEnglish) {
+      isHindi = false;
+    } else if (switchToHindi) {
+      isHindi = true;
+    } else {
+      // Memory Rule 4: Never switch language automatically.
+      // If previous context was Hindi, stay in Hindi unless explicit request to switch.
+      if (conversationLangRef.current === "hi") {
+        isHindi = true;
+      } else {
+        // If previous context was English, check if they started speaking Hindi
+        isHindi = hasDevanagari || hasHindiKeyword;
+      }
+    }
+
+    // Remember current detected language for next turn
+    conversationLangRef.current = isHindi ? "hi" : "en";
+
+    // ── Negative Continuation: "no" / "nahi" ─────────────────────────────────
+    if (isNegativeContinuation) {
+      let answer = "";
+      if (isHindi) {
+        answer = "ठीक है, अगर आप अभिषेक के बारे में कुछ और जानना चाहते हैं तो कभी भी पूछ सकते हैं।";
+      } else {
+        answer = "Alright, feel free to ask me any other questions about Abhishek whenever you're ready.";
+      }
       setIsThinking(false);
+      speakText(answer);
+      return;
+    }
+
+    // ── Continuation: "yes" / "tell me more" ──────────────────────────────────
+    // When user says yes/continue/h, continue from the topic that was last answered
+    if (isContinuationOnly) {
+      let answer = "";
+      const topic = lastTopicRef.current;
+      if (isHindi) {
+        if (topic === "greeting" || topic === "") {
+          // After greeting → give professional introduction
+          lastTopicRef.current = "intro";
+          answer = "अभिषेक कुमार एक Gen AI और Full Stack Developer हैं जिनके पास 7 साल का प्रोफेशनल सॉफ्टवेयर इंजीनियरिंग अनुभव है। वे GenAquarius, R Systems, K-12 Learning Solutions और Virtual Employee जैसी कंपनियों के साथ काम कर चुके हैं। उन्होंने स्केलेबल वेब एप्लीकेशन, एंटरप्राइज़ प्लेटफॉर्म, माइक्रोसर्विसेज़ और क्लाउड-बेस्ड सॉल्यूशन डिज़ाइन किए हैं। उनकी विशेषज्ञता React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS और Generative AI तकनीकों में है। क्या आप आईटी इंडस्ट्री के बाहर अभिषेक की पर्सनल रुचियों के बारे में जानना चाहेंगे?";
+        } else if (topic === "intro") {
+          // After professional intro → give personal interests (Memory Rule 5 target template)
+          lastTopicRef.current = "personal";
+          answer = "अभिषेक को संगीत, ट्रैवलिंग और एडवेंचर का काफी शौक है। उन्हें गिटार बजाना और गाना पसंद है। उन्होंने विभिन्न म्यूजिकल परफॉर्मेंस, बैंड एक्टिविटीज़ और इंडियन आइडल तथा सा रे ग म पा जैसे प्लेटफॉर्म्स के ऑडिशन्स में भी भाग लिया है। इसके अलावा उन्हें उत्तराखंड, अल्मोड़ा और अन्य पहाड़ी क्षेत्रों में घूमना, लंबी राइड्स और रोड ट्रिप्स करना पसंद है। ये गतिविधियाँ उन्हें क्रिएटिव और ऊर्जावान बनाए रखती हैं। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में भी जानना चाहेंगे?";
+        } else if (topic === "personal") {
+          // After personal → give career experience
+          lastTopicRef.current = "experience";
+          answer = "अभिषेक को आईटी सेक्टर में 7 साल का अनुभव है। उन्होंने GenAquarius में Gen AI Developer और R Systems में 4 साल सॉफ्टवेयर डेवलपर के रूप में काम किया। वे React, Next.js, Node.js और Generative AI में एक्सपर्ट हैं। क्या आप उनके स्किल्स और प्रोजेक्ट्स के बारे में जानना चाहेंगे?";
+        } else if (topic === "experience") {
+          // After experience → give skills
+          lastTopicRef.current = "skills";
+          answer = "अभिषेक का टेक्निकल स्टैक बहुत मज़बूत है। फ्रंटेंड में वे React.js, Next.js, Vue.js, Tailwind CSS और Material UI में माहिर हैं। बैकएंड में Node.js, NestJS, REST APIs, GraphQL और RabbitMQ में काम करते हैं। डेटाबेस में PostgreSQL, MongoDB और MySQL का अनुभव है। क्लाउड में Azure DevOps और AWS पर काम किया है। Generative AI में LLM एप्लीकेशन, RAG सिस्टम और Semantic Search में भी एक्सपर्ट हैं। क्या आप उनके प्रोजेक्ट्स के बारे में जानना चाहेंगे?";
+        } else if (topic === "skills") {
+          // After skills → give projects
+          lastTopicRef.current = "projects";
+          answer = "अभिषेक का सबसे बड़ा प्रोजेक्ट Station Casinos Labor System है — एक एंटरप्राइज़ वर्कफ़ोर्स मैनेजमेंट प्लेटफॉर्म जो हज़ारों एम्प्लॉयी के शेड्यूल और लेबर डेटा को मैनेज करता है। इसमें React.js, Next.js, Node.js, NestJS, MongoDB और MySQL का इस्तेमाल हुआ। इसके अलावा Generative AI प्रोजेक्ट्स पर भी काम किया है। क्या आप अभिषेक से संपर्क करने के बारे में जानना चाहेंगे?";
+        } else {
+          lastTopicRef.current = "greeting";
+          answer = "मैं अभिषेक का पर्सनल असिस्टेंट हूँ। आप उनके सॉफ्टवेयर इंजीनियरिंग करियर, स्किल्स, प्रोजेक्ट्स या पर्सनल INTERESTS के बारे में पूछ सकते हैं। क्या आप उनके करियर के बारे में जानना चाहेंगे?";
+        }
+      } else {
+        if (topic === "greeting" || topic === "") {
+          // After greeting → give professional introduction
+          lastTopicRef.current = "intro";
+          answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
+        } else if (topic === "intro") {
+          // After professional intro → give personal interests
+          lastTopicRef.current = "personal";
+          answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
+        } else if (topic === "personal") {
+          // After personal → give career experience
+          lastTopicRef.current = "experience";
+          answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his technical skills?";
+        } else if (topic === "experience") {
+          // After experience → give skills
+          lastTopicRef.current = "skills";
+          answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know about his projects?";
+        } else if (topic === "skills") {
+          // After skills → give projects
+          lastTopicRef.current = "projects";
+          answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know how to contact him?";
+        } else {
+          lastTopicRef.current = "greeting";
+          answer = "I'm Abhishek's Portfolio Assistant. You can ask me about his software engineering experience, technical skills, projects, or personal achievements. Would you like to hear about his software engineering career?";
+        }
+      }
+      setIsThinking(false);
+      speakText(answer);
+      return;
+    }
+
+    // ── Local QA Matcher (Try before LLM to prevent generic AI fallbacks) ──────────
+    const query = cleanQuery;
+    let answer = "";
+    let matchedLocally = false;
+
+    if (isHindi) {
+      // Personal interests (Hindi)
+      if (
+        query.includes("personal") || query.includes("hobby") || query.includes("extra") ||
+        query.includes("sing") || query.includes("gana") || query.includes("gata") ||
+        query.includes("idol") || query.includes("guitar") || query.includes("gitar") ||
+        query.includes("travel") || query.includes("safar") || query.includes("ghoom") ||
+        query.includes("music") || query.includes("passion") ||
+        query.includes("पर्सनल") || query.includes("हॉबी") || query.includes("रुचि") || query.includes("रुचियों") ||
+        query.includes("एक्स्ट्रा") || query.includes("गाना") || query.includes("गाते") || query.includes("सा रे ग") ||
+        query.includes("सिंगिंग") || query.includes("गिटार") || query.includes("ट्रैवल") || query.includes("सफ़र") ||
+        query.includes("सफर") || query.includes("घूम") || query.includes("घूमना") || query.includes("म्यूजिक") ||
+        query.includes("संगीत") || query.includes("पैशन")
+      ) {
+        lastTopicRef.current = "personal";
+        answer = "अभिषेक को संगीत, ट्रैवलिंग और एडवेंचर का काफी शौक है। उन्हें गिटार बजाना और गाना पसंद है। उन्होंने विभिन्न म्यूजिकल परफॉर्मेंस, बैंड एक्टिविटीज़ और इंडियन आइडल तथा सा रे ग म पा जैसे प्लेटफॉर्म्स के ऑडिशन्स में भी भाग लिया है। इसके अलावा उन्हें उत्तराखंड, अल्मोड़ा और अन्य पहाड़ी क्षेत्रों में घूमना, लंबी राइड्स और रोड ट्रिप्स करना पसंद है। ये गतिविधियाँ उन्हें क्रिएटिव और ऊर्जावान बनाए रखती हैं। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में भी जानना चाहेंगे?";
+        matchedLocally = true;
+      }
+      // Introduction (Hindi)
+      else if (
+        query.includes("who is") || query.includes("kaun") || query.includes("kya hai") ||
+        query.includes("about") || query.includes("abhishek") || query.includes("introduce") ||
+        query.includes("batao") || query.includes("bata") || query.includes("parichay") ||
+        query.includes("कौन") || query.includes("क्या है") || query.includes("बारे में") ||
+        query.includes("परिचय") || query.includes("अभिषेक") || query.includes("इंट्रोड्यूस") ||
+        query.includes("बताओ") || query.includes("बता") || query.includes("बताइये") ||
+        query.includes("बना")
+      ) {
+        lastTopicRef.current = "intro";
+        answer = "अभिषेक कुमार एक Gen AI और Full Stack Developer हैं जिनके पास 7 साल का प्रोफेशनल सॉफ्टवेयर इंजीनियरिंग अनुभव है। वे GenAquarius, R Systems, K-12 Learning Solutions और Virtual Employee जैसी कंपनियों के साथ काम कर चुके हैं। उन्होंने स्केलेबल वेब एप्लीकेशन, एंटरप्राइज़ प्लेटफॉर्म, माइक्रोसर्विसेज़ और क्लाउड-बेस्ड सॉल्यूशन डिज़ाइन किए हैं। उनकी विशेषज्ञता React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS और Generative AI तकनीकों में है। क्या आप आईटी इंडस्ट्री के बाहर अभिषेक की पर्सनल रुचियों के बारे में जानना चाहेंगे?";
+        matchedLocally = true;
+      }
+      // Skills (Hindi)
+      else if (
+        query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
+        query.includes("technology") || query.includes("tech") ||
+        query.includes("frontend") || query.includes("backend") || query.includes("framework") ||
+        query.includes("kya aata") ||
+        query.includes("स्किल्स") || query.includes("स्किल") || query.includes("स्टैक") ||
+        query.includes("टेक्नोलॉजी") || query.includes("तकनीक") || query.includes("टेक") ||
+        query.includes("फ्रंटएंड") || query.includes("बैकएंड") || query.includes("फ्रेमवर्क") ||
+        query.includes("क्या आता")
+      ) {
+        lastTopicRef.current = "skills";
+        answer = "अभिषेक का टेक्निकल स्टैक बहुत मज़बूत है। फ्रंटेंड में वे React.js, Next.js, Vue.js, Tailwind CSS और Material UI में माहिर हैं। बैकएंड में Node.js, NestJS, REST APIs, GraphQL और RabbitMQ में काम करते हैं। डेटाबेस में PostgreSQL, MongoDB और MySQL का अनुभव है। क्लाउड में Azure DevOps और AWS पर काम किया है। Generative AI में LLM एप्लीकेशन, RAG सिस्टम और Semantic Search में भी एक्सपर्ट हैं। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
+        matchedLocally = true;
+      }
+      // Experience (Hindi)
+      else if (
+        query.includes("experience") || query.includes("work") || query.includes("job") ||
+        query.includes("compan") || query.includes("history") || query.includes("kaam") ||
+        query.includes("nokri") || query.includes("career") || query.includes("carrer") || query.includes("carear") ||
+        query.includes("एक्सपीरियंस") || query.includes("अनुभव") || query.includes("काम") ||
+        query.includes("कार्य") || query.includes("जॉब") || query.includes("नौकरी") ||
+        query.includes("नोकरी") || query.includes("कंपनी") || query.includes("कंपनियों") ||
+        query.includes("इतिहास") || query.includes("करियर")
+      ) {
+        lastTopicRef.current = "experience";
+        answer = "अभिषेक को आईटी सेक्टर में 7 साल का अनुभव है। उन्होंने GenAquarius में Gen AI और Full Stack Developer के रूप में काम किया जहाँ उन्होंने LLM और RAG बेस्ड फीचर्स बनाए। R Systems में लगभग 4 साल तक एंटरप्राइज़ Casino Management System पर काम किया। K-12 Learning Solutions में Front End Developer रहे और Virtual Employee में जूनियर डेवलपर के रूप में करियर शुरू किया। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
+        matchedLocally = true;
+      }
+      // Projects (Hindi)
+      else if (
+        query.includes("project") || query.includes("casino") || query.includes("k-12") ||
+        query.includes("station") || query.includes("kaam kya") ||
+        query.includes("प्रोजेक्ट") || query.includes("प्रोजेक्ट्स") || query.includes("कैसीनो") ||
+        query.includes("स्टेशन") || query.includes("काम क्या")
+      ) {
+        lastTopicRef.current = "projects";
+        answer = "अभिषेक का सबसे बड़ा प्रोजेक्ट Station Casinos Labor System है — एक एंटरप्राइज़ वर्कफ़ोर्स मैनेजमेंट प्लेटफॉर्म जो हज़ारों एम्प्लॉयी के शेड्यूल और लेबर डेटा को मैनेज करता है। इसमें React.js, Next.js, Node.js, NestJS, MongoDB और MySQL का इस्तेमाल हुआ। इसके अलावा Generative AI प्रोजेक्ट्स पर भी काम किया है। क्या आप उनके पर्सनल INTERESTS के बारे में जानना चाहेंगे?";
+        matchedLocally = true;
+      }
+      // Contact (Hindi)
+      else if (
+        query.includes("contact") || query.includes("email") || query.includes("phone") ||
+        query.includes("reach") || query.includes("number") || query.includes("sampark") ||
+        query.includes("कांटेक्ट") || query.includes("संपर्क") || query.includes("ईमेल") ||
+        query.includes("फोन") || query.includes("नंबर")
+      ) {
+        lastTopicRef.current = "contact";
+        answer = `आप अभिषेक से ${profile.email} ईमेल पर या ${profile.phone} फोन नंबर पर संपर्क कर सकते हैं। वे गाज़ियाबाद, भारत में स्थित हैं। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?`;
+        matchedLocally = true;
+      }
+    } else {
+      // English path
+      // Personal interests (English)
+      if (
+        query.includes("personal") || query.includes("hobby") ||
+        query.includes("extra") || query.includes("interest") || query.includes("sing") ||
+        query.includes("song") || query.includes("music") || query.includes("idol") ||
+        query.includes("guitar") || query.includes("travel") || query.includes("trip") ||
+        query.includes("passion") || query.includes("sa re ga")
+      ) {
+        lastTopicRef.current = "personal";
+        answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
+        matchedLocally = true;
+      }
+      // Introduction (English)
+      else if (
+        query.includes("who is") || query.includes("about") || query.includes("abhishek") ||
+        query.includes("introduce") || query.includes("bio") || query.includes("profile") ||
+        query.includes("tell me")
+      ) {
+        lastTopicRef.current = "intro";
+        answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
+        matchedLocally = true;
+      }
+      // Skills (English)
+      else if (
+        query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
+        query.includes("technology") || query.includes("tech") ||
+        query.includes("frontend") || query.includes("backend") || query.includes("framework") ||
+        query.includes("expertise")
+      ) {
+        lastTopicRef.current = "skills";
+        answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know more about his personal interests?";
+        matchedLocally = true;
+      }
+      // Experience (English)
+      else if (
+        query.includes("experience") || query.includes("work") || query.includes("job") ||
+        query.includes("compan") || query.includes("history") || query.includes("career")
+      ) {
+        lastTopicRef.current = "experience";
+        answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his personal interests outside the IT sector?";
+        matchedLocally = true;
+      }
+      // Projects (English)
+      else if (
+        query.includes("project") || query.includes("casino") || query.includes("station") ||
+        query.includes("k-12") || query.includes("built") || query.includes("worked on")
+      ) {
+        lastTopicRef.current = "projects";
+        answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know about his personal interests?";
+        matchedLocally = true;
+      }
+      // Contact (English)
+      else if (
+        query.includes("contact") || query.includes("email") || query.includes("phone") ||
+        query.includes("reach") || query.includes("number") || query.includes("mail")
+      ) {
+        lastTopicRef.current = "contact";
+        answer = `You can reach Abhishek at ${profile.email} or call him at ${profile.phone}. He is located in Ghaziabad, India. Would you like to know more about his personal interests?`;
+        matchedLocally = true;
+      }
+    }
+
+    if (matchedLocally) {
+      setIsThinking(false);
+      speakText(answer);
+      return;
+    }
+
+    // Try LLM next
+    let promptWithLang = text;
+    if (isHindi) {
+      promptWithLang += " (Please respond in Hindi/हिंदी)";
+    }
+    const llmAnswer = await fetchLLMResponse(promptWithLang);
+    if (llmAnswer) {
+      setIsThinking(false);
+      // Keep conversation language consistent
+      if (isHindi) {
+        conversationLangRef.current = "hi";
+      } else {
+        const llmIsHindi = /[\u0900-\u097F]/.test(llmAnswer);
+        conversationLangRef.current = llmIsHindi ? "hi" : "en";
+      }
       speakText(llmAnswer);
       return;
     }
 
-    // Fallback Local QA Engine containing full resume details
-    let answer = "";
-    const isHindiQuery = /[\u0900-\u097F]/.test(text) || 
-      query.includes("kaun") || query.includes("kya") || query.includes("gana") || 
-      query.includes("sing") || query.includes("safar") || query.includes("guitar") || 
-      query.includes("ghoom") || query.includes("yes") || query.includes("haan") ||
-      query.includes("personal") || query.includes("hobby") || query.includes("abhishek") && appLang === "hi";
-
-    if (isHindiQuery) {
-      // 1. Extracurriculars / Hobbies / Personal (Hindi)
-      if (
-        query.includes("yes") || query.includes("haan") || query.includes("ha ") || query.includes("personal") || 
-        query.includes("hobby") || query.includes("extra") || query.includes("cricula") ||
-        query.includes("sing") || query.includes("gana") || query.includes("gata") || 
-        query.includes("idol") || query.includes("guitar") || query.includes("gitar") || 
-        query.includes("travel") || query.includes("safar") || query.includes("ghoom")
-      ) {
-        answer = "अभिषेक एक बहुत अच्छे सिंगर और गिटार वादक हैं जिन्होंने इंडियन आइडल के मंच पर परफॉर्म किया है। वे पहाड़ों पर ट्रैवल करना और नई जगहों को एक्सप्लोर करना भी बेहद पसंद करते हैं। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में जानना चाहेंगे?";
-      }
-      // 2. About Abhishek (Hindi)
-      else if (
-        query.includes("who is") || query.includes("kaun") || query.includes("kya hai") ||
-        query.includes("about") || query.includes("abhishek") || query.includes("introduce") ||
-        query.includes("bio") || query.includes("profile") || query.includes("myself")
-      ) {
-        answer = "अभिषेक कुमार एक फुल स्टैक डेवलपर हैं जिन्हें वेब एप्लीकेशन बनाने का 7 साल का अनुभव है। वे रियेक्ट, नेक्स्ट जेएस और नोड जेएस में माहिर हैं। क्या आप आईटी सेक्टर के अलावा अभिषेक के पर्सनल इंटरेस्ट्स और एक्स्ट्रा करिकुलर एक्टिविटीज़ के बारे में जानना चाहेंगे?";
-      }
-      // 3. Skills (Hindi)
-      else if (
-        query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
-        query.includes("frontend") || query.includes("backend") || query.includes("framework")
-      ) {
-        answer = "अभिषेक का टेक्निकल स्टैक बहुत ही एडवांस है। वे जावास्क्रिप्ट, रियेक्ट, नेक्स्ट जेएस, नोड, नेस्ट जेएस, मोंगो डीबी, एसक्यूएल और जनरेटिव एआई में कुशल हैं। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
-      }
-      // 4. Experience (Hindi)
-      else if (
-        query.includes("experience") || query.includes("work") || query.includes("job") ||
-        query.includes("compan") || query.includes("history")
-      ) {
-        answer = "अभिषेक को आईटी सेक्टर में 7 साल का अनुभव है। वे जेन एक्वेरियस में फुल स्टैक और जनरेटिव एआई डेवलपर रहे हैं। आर सिस्टम्स में उन्होंने 4 साल तक काम किया है। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
-      }
-      // 5. Contact (Hindi)
-      else if (
-        query.includes("contact") || query.includes("email") || query.includes("phone") ||
-        query.includes("reach") || query.includes("number") || query.includes("mail")
-      ) {
-        answer = `आप अभिषेक को ईमेल ${profile.email} या फोन ${profile.phone} पर संपर्क कर सकते हैं। वे गाजियाबाद, भारत में रहते हैं। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?`;
-      }
-      else {
-        answer = "अभिषेक एक फुल स्टैक डेवलपर होने के साथ-साथ सिंगर और गिटारिस्ट भी हैं। क्या आप आईटी सेक्टर के अलावा अभिषेक के पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
-      }
+    // Fallback if LLM fails and no local QA matched
+    if (isHindi) {
+      lastTopicRef.current = "greeting";
+      answer = "मैं अभिषेक का पर्सनल असिस्टेंट हूँ। आप उनके सॉफ्टवेयर इंजीनियरिंग करियर, स्किल्स, प्रोजेक्ट्स या पर्सनल INTERESTS के बारे में पूछ सकते हैं। क्या आप उनके करियर के बारे में जानना चाहेंगे?";
     } else {
-      // English / Hinglish fallback
-      // 1. Extracurriculars / Hobbies / Personal (English)
-      if (
-        query.includes("yes") || query.includes("personal") || query.includes("hobby") || 
-        query.includes("extra") || query.includes("cricula") || query.includes("interest") ||
-        query.includes("sing") || query.includes("song") || query.includes("music") || 
-        query.includes("idol") || query.includes("guitar") || query.includes("travel") || query.includes("trip")
-      ) {
-        answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who performed on Indian Idol. He is also a passionate traveler who loves exploring nature. Would you like to hear about his software engineering career?";
-      }
-      // 2. About Abhishek / Intro (English)
-      else if (
-        query.includes("who is") || query.includes("about") || query.includes("abhishek") ||
-        query.includes("introduce") || query.includes("bio") || query.includes("profile") ||
-        query.includes("myself")
-      ) {
-        answer = "Abhishek Kumar is a Full Stack and Gen AI Developer with 7 years of experience building scalable web applications. Would you like to know more about Abhishek's personal interests and extracurricular activities outside of the IT sector?";
-      }
-      // 3. Skills (English)
-      else if (
-        query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
-        query.includes("frontend") || query.includes("backend") || query.includes("framework")
-      ) {
-        answer = "Abhishek is highly skilled in React, Next.js, Node.js, NestJS, and Database systems, alongside Generative AI (LLM & RAG). Would you like to know more about Abhishek's personal interests and extracurricular activities?";
-      }
-      // 4. Experience (English)
-      else if (
-        query.includes("experience") || query.includes("work") || query.includes("job") ||
-        query.includes("compan") || query.includes("history")
-      ) {
-        answer = "Abhishek has 7 years of software experience, including working at GenAquarius on Gen AI features, and almost 4 years at R Systems. Would you like to know more about Abhishek's personal interests outside the IT sector?";
-      }
-      // 5. Contact (English)
-      else if (
-        query.includes("contact") || query.includes("email") || query.includes("phone") ||
-        query.includes("reach") || query.includes("number") || query.includes("mail")
-      ) {
-        answer = `You can email Abhishek at ${profile.email} or call him at ${profile.phone}. He is located in Ghaziabad, India. Would you like to know more about his personal interests?`;
-      }
-      else {
-        answer = "Abhishek is a developer who also sings and plays guitar. Would you like to know more about Abhishek's personal interests and extracurricular activities outside of the IT sector?";
-      }
+      lastTopicRef.current = "greeting";
+      answer = "I'm Abhishek's Portfolio Assistant. You can ask me about his career, skills, projects, or personal interests. Would you like to hear about his software engineering career?";
     }
 
-    setAiResponse(answer);
     setIsThinking(false);
     speakText(answer);
   };
@@ -415,26 +864,18 @@ Rules:
     }
   };
 
-  const toggleLanguage = () => {
-    const nextLang = appLang === "en" ? "hi" : "en";
-    setAppLang(nextLang);
-    if (recognitionRef.current) {
-      recognitionRef.current.lang = nextLang === "hi" ? "hi-IN" : "en-IN";
-    }
-    // Update local text immediately
-    stopSpeaking();
-    stopListening();
-    setTranscript("");
-    if (nextLang === "hi") {
-      setAiResponse("नमस्ते! मैं अभिषेक का वॉइस असिस्टेंट हूँ। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में जानना चाहते हैं?");
-    } else {
-      setAiResponse("Hi! I'm Abhishek's Voice Assistant. Would you like to hear about his software engineering career?");
-    }
+  // ─── Status label (no text shown, just for aria) ──────────────────────────────
+  const getStatusLabel = () => {
+    if (isListening) return "Listening…";
+    if (isThinking) return "Thinking…";
+    if (isSpeaking) return "Speaking…";
+    return "Tap to speak";
   };
 
+  // ─── Render ───────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* Custom Keyframe Animations for Siri-style Waveform */}
+      {/* Custom Keyframe Animations */}
       <style jsx global>{`
         @keyframes siri-rotate-1 {
           from { transform: rotate(0deg); }
@@ -461,71 +902,62 @@ Rules:
           50% { rx: 65px; ry: 75px; }
         }
         @keyframes siri-pulse-glow {
-          0%, 100% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.2); }
-          50% { box-shadow: 0 0 50px rgba(59, 130, 246, 0.7), inset 0 0 25px rgba(59, 130, 246, 0.4); }
+          0%, 100% { box-shadow: 0 0 30px rgba(59,130,246,0.4), inset 0 0 15px rgba(59,130,246,0.2); }
+          50% { box-shadow: 0 0 50px rgba(59,130,246,0.7), inset 0 0 25px rgba(59,130,246,0.4); }
         }
         @keyframes indicator-glow {
-          0%, 100% { filter: drop-shadow(0 0 3px rgba(6, 182, 212, 0.6)); }
-          50% { filter: drop-shadow(0 0 8px rgba(139, 92, 246, 1)); }
+          0%, 100% { filter: drop-shadow(0 0 3px rgba(6,182,212,0.6)); }
+          50% { filter: drop-shadow(0 0 8px rgba(139,92,246,1)); }
+        }
+        @keyframes tap-hint-pulse {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 1; }
         }
       `}</style>
 
-      {/* Sleek Dark Glass Trigger Pill */}
+      {/* Trigger Pill */}
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-black/90 border border-white/10 px-5 py-3 shadow-[0_4px_30px_rgba(0,0,0,0.8)] backdrop-blur-md hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none"
         title="Voice AI"
         aria-label="Voice AI"
       >
-        <span 
-          className="h-3 w-3 shrink-0 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600 animate-pulse" 
+        <span
+          className="h-3 w-3 shrink-0 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-purple-600"
           style={{ animation: "indicator-glow 2s infinite" }}
         />
         <span className="text-[10px] font-bold tracking-[0.25em] text-white uppercase select-none">Voice AI</span>
       </button>
 
-      {/* Immersive Siri-Style Voice Screen */}
+      {/* Fullscreen Voice Screen */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex flex-col justify-between bg-[#080914] p-8 text-white select-none animate-in fade-in duration-200">
-          
+
           {/* Header */}
           <div className="flex items-center justify-between z-20">
             <span className="text-xs uppercase tracking-widest text-neutral-500 font-semibold">Voice Assistant</span>
-            
-            <div className="flex items-center gap-4">
-              {/* Language Toggle Button */}
-              <button
-                onClick={toggleLanguage}
-                className="rounded-full bg-neutral-900 border border-white/10 px-4 py-1 text-xs font-semibold hover:bg-neutral-800 text-white transition-all"
-                title={appLang === "en" ? "Switch to Hindi" : "Switch to English"}
-              >
-                {appLang === "en" ? "EN | हिन्दी" : "हिन्दी | EN"}
-              </button>
-
-              {/* Close Button */}
-              <button
-                onClick={() => {
-                  stopSpeaking();
-                  stopListening();
-                  setIsOpen(false);
-                }}
-                className="rounded-full bg-neutral-900/60 p-2.5 text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors"
-                title="Close Voice Assistant"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                stopSpeaking();
+                stopListening();
+                setIsOpen(false);
+              }}
+              className="rounded-full bg-neutral-900/60 p-2.5 text-neutral-400 hover:bg-neutral-800 hover:text-white transition-colors"
+              title="Close Voice Assistant"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
-          {/* Central Siri Waveform and Mic Area */}
-          <div className="relative flex flex-col items-center justify-center flex-1">
-            
+          {/* Central Waveform + Mic */}
+          <div className="relative flex flex-col items-center justify-center flex-1 gap-6">
+
             {/* Waveform Wrapper */}
             <div className="relative flex items-center justify-center h-[340px] w-[340px] max-w-full">
-              
-              {/* High-Fidelity Wavy Gradient Ribbons (SVG) */}
+
+              {/* Siri-style Gradient Ribbons */}
               <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="siri-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -542,21 +974,21 @@ Rules:
                   </linearGradient>
                 </defs>
 
-                {/* Cyan Ribbon Shell */}
+                {/* Cyan Ribbon */}
                 <g style={{ transformOrigin: "100px 100px", animation: `siri-rotate-1 ${isListening ? "3.5s" : isSpeaking ? "4.5s" : isThinking ? "1.5s" : "11s"} linear infinite` }}>
                   <ellipse cx="100" cy="100" rx="78" ry="58" stroke="url(#siri-cyan)" strokeWidth="1" style={{ animation: "siri-pulse-rx-1 2s ease-in-out infinite" }} />
                   <ellipse cx="100" cy="100" rx="75" ry="61" stroke="url(#siri-cyan)" strokeWidth="0.8" style={{ animation: "siri-pulse-rx-1 2.2s ease-in-out infinite" }} />
                   <ellipse cx="100" cy="100" rx="81" ry="55" stroke="url(#siri-cyan)" strokeWidth="0.5" style={{ animation: "siri-pulse-rx-1 1.8s ease-in-out infinite" }} />
                 </g>
 
-                {/* Purple Ribbon Shell */}
+                {/* Purple Ribbon */}
                 <g style={{ transformOrigin: "100px 100px", animation: `siri-rotate-2 ${isListening ? "4.5s" : isSpeaking ? "5.5s" : isThinking ? "2s" : "14s"} linear infinite` }}>
                   <ellipse cx="100" cy="100" rx="58" ry="78" stroke="url(#siri-purple)" strokeWidth="1" style={{ animation: "siri-pulse-rx-2 2.2s ease-in-out infinite" }} />
                   <ellipse cx="100" cy="100" rx="61" ry="75" stroke="url(#siri-purple)" strokeWidth="0.8" style={{ animation: "siri-pulse-rx-2 1.8s ease-in-out infinite" }} />
                   <ellipse cx="100" cy="100" rx="55" ry="81" stroke="url(#siri-purple)" strokeWidth="0.5" style={{ animation: "siri-pulse-rx-2 2.4s ease-in-out infinite" }} />
                 </g>
 
-                {/* Blue/Indigo Ribbon Shell */}
+                {/* Blue Ribbon */}
                 <g style={{ transformOrigin: "100px 100px", animation: `siri-rotate-3 ${isListening ? "5.5s" : isSpeaking ? "6.5s" : isThinking ? "2.5s" : "17s"} linear infinite` }}>
                   <ellipse cx="100" cy="100" rx="70" ry="70" stroke="url(#siri-blue)" strokeWidth="1" style={{ animation: "siri-pulse-rx-3 1.8s ease-in-out infinite" }} />
                   <ellipse cx="100" cy="100" rx="67" ry="73" stroke="url(#siri-blue)" strokeWidth="0.8" style={{ animation: "siri-pulse-rx-3 2.4s ease-in-out infinite" }} />
@@ -564,23 +996,31 @@ Rules:
                 </g>
               </svg>
 
-              {/* Central Glowing Mic Button */}
-              <button 
+              {/* Central Mic Button */}
+              <button
                 onClick={handleMicClick}
                 className="relative flex items-center justify-center h-20 w-20 rounded-full bg-blue-600/10 border border-blue-500/30 transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none"
                 style={{
                   animation: (isListening || isSpeaking || isThinking) ? "siri-pulse-glow 2s infinite" : "none"
                 }}
+                aria-label={getStatusLabel()}
               >
-                {/* Concentric Glow Circle */}
                 <div className="absolute inset-1.5 rounded-full bg-blue-500/10 border border-blue-400/20" />
-                
-                {/* Blue Mic Icon */}
                 <svg className="h-8 w-8 text-blue-400 drop-shadow-[0_0_10px_rgba(96,165,250,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
               </button>
             </div>
+
+            {/* Tap-to-speak hint — shown only when idle */}
+            {!isListening && !isSpeaking && !isThinking && (
+              <p
+                className="text-xs text-neutral-500 tracking-widest uppercase"
+                style={{ animation: "tap-hint-pulse 2.5s ease-in-out infinite" }}
+              >
+                Tap to speak
+              </p>
+            )}
           </div>
         </div>
       )}
