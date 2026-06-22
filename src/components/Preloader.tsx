@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-// "Hello" in a handful of languages — Hindi included for Abhishek.
+// "Hello" in a handful of languages.
 const greetings = [
   "Hello",
-  "नमस्ते",
   "Bonjour",
   "Hola",
   "Ciao",

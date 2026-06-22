@@ -18,7 +18,7 @@ export default function VoiceAssistant() {
   const isThinkingRef = useRef(isThinking);
   const isSpeakingRef = useRef(isSpeaking);
   // Tracks detected conversation language across turns so "yes" / "tell me more" replies in the right language
-  const conversationLangRef = useRef<"en" | "hi">("en");
+  const conversationLangRef = useRef<"en">("en");
   // Tracks last discussed topic so "yes" continues correctly
   const lastTopicRef = useRef<"greeting" | "intro" | "personal" | "skills" | "experience" | "projects" | "contact" | "">("greeting");
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -128,18 +128,16 @@ Professional Introduction Template:
 "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems and enterprise applications used by thousands of users."
 
 After professional answer ask:
-English: "Would you like to know about Abhishek's personal interests and achievements outside the IT industry?"
-Hindi: "क्या आप आईटी इंडस्ट्री के बाहर अभिषेक की पर्सनल रुचियों और उपलब्धियों के बारे में जानना चाहेंगे?"
+"Would you like to know about Abhishek's personal interests and achievements outside the IT industry?"
 
 RULE 3 — PERSONAL INTERESTS (only when explicitly asked):
-ONLY discuss personal interests when the user explicitly asks about: hobbies, personal life, extracurricular, interests, music, singing, guitar, Indian Idol, Sa Re Ga Ma Pa, travel, travelling, passion — OR says "yes" or "haan" after the follow-up question.
+ONLY discuss personal interests when the user explicitly asks about: hobbies, personal life, extracurricular, interests, music, singing, guitar, Indian Idol, Sa Re Ga Ma Pa, travel, travelling, passion — OR says "yes" after the follow-up question.
 
 Personal Interests Template:
 "Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle alongside his software engineering career."
 
 After personal interests answer ask:
-English: "Would you like to hear about his software engineering career and technical expertise?"
-Hindi: "क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर और तकनीकी विशेषज्ञता के बारे में जानना चाहेंगे?"
+"Would you like to hear about his software engineering career and technical expertise?"
 
 RULE 4 — ANSWER DEPTH:
 For introduction questions: provide detailed answers (5-8 sentences), NOT 1-2 sentences.
@@ -147,10 +145,10 @@ For skills questions: explain Frontend Skills, Backend Skills, Cloud, Databases,
 For experience questions: explain total years, company names, responsibilities, major achievements, technologies used.
 
 RULE 5 — LANGUAGE:
-Always answer in the language the visitor uses. Hindi/Hinglish → respond in Hindi. English → respond in English.
+Always answer in English.
 
 RULE 6 — CONVERSATION CONTINUITY:
-If the user says "yes", "haan", "tell me more", or "continue" — continue from the previous topic naturally without restarting.
+If the user says "yes", "tell me more", or "continue" — continue from the previous topic naturally without restarting.
 
 RULE 7 — IDENTITY:
 Never say you are an AI model from OpenAI. Behave as Abhishek's personal portfolio assistant. Answer naturally as if speaking to a visitor on Abhishek's portfolio website.
@@ -173,7 +171,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
         // Enable continuous and interimResults for custom silence/pause detection
         rec.continuous = true;
         rec.interimResults = true;
-        // Use en-IN as base — browser auto-detects Hindi Devanagari script too
+        // Use en-IN as base language
         rec.lang = "en-IN";
 
         rec.onstart = () => {
@@ -277,84 +275,56 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
 
     stopSpeaking();
 
-    // Auto-detect language from the response text (Devanagari script = Hindi)
-    const isHindiText = /[\u0900-\u097F]/.test(text);
-
     // ── Select voice ONCE (reused for all chunks) ──
     const voices = synthesisRef.current.getVoices();
     let selectedVoice: SpeechSynthesisVoice | undefined;
 
-    // Log all available voices for the target language (debug)
-    const targetLang = isHindiText ? "hi" : "en";
-    console.log(`[VoiceAssistant] Available ${targetLang} voices:`,
-      voices.filter((v) => v.lang.startsWith(targetLang)).map((v) => `${v.name} (${v.lang}, local=${v.localService})`)
+    // Log all available voices for English (debug)
+    console.log(`[VoiceAssistant] Available en voices:`,
+      voices.filter((v) => v.lang.startsWith("en")).map((v) => `${v.name} (${v.lang}, local=${v.localService})`)
     );
 
-    if (isHindiText) {
-      selectedVoice =
-        // 1. Lekha — Apple premium female Hindi voice (LOCAL, no buffering)
-        voices.find((v) => v.lang.startsWith("hi-") && v.name.includes("Lekha")) ||
-        // 2. Any LOCAL female Hindi voice (offline = no hesitation)
-        voices.find((v) => v.lang.startsWith("hi-") && v.localService && isFemaleVoice(v)) ||
-        // 3. Any LOCAL Hindi voice (even male is better than network buffering)
-        voices.find((v) => v.lang.startsWith("hi-") && v.localService) ||
-        // 4. Google Hindi (network voice — last resort, may buffer)
-        voices.find((v) => v.lang === "hi-IN" && v.name.includes("Google")) ||
-        // 5. Any Hindi voice
-        voices.find((v) => v.lang.startsWith("hi-") && isFemaleVoice(v)) ||
-        voices.find((v) => v.lang.startsWith("hi-"));
-    } else {
-      selectedVoice =
-        // 1. Siri Female en-IN (best: Indian English Siri woman)
-        voices.find((v) => v.lang.startsWith("en-IN") && v.name.includes("Siri") && isFemaleVoice(v)) ||
-        // 2. Veena — Apple female en-IN
-        voices.find((v) => v.lang.startsWith("en-IN") && v.name.includes("Veena")) ||
-        // 3. Siri Female en-GB (UK Siri woman — very smooth)
-        voices.find((v) => v.lang.startsWith("en-GB") && v.name.includes("Siri") && isFemaleVoice(v)) ||
-        // 4. Siri Female en-US (US Siri woman)
-        voices.find((v) => v.lang.startsWith("en-US") && v.name.includes("Siri") && isFemaleVoice(v)) ||
-        // 5. Samantha — Apple premium female en-US (extremely clear, like classic Siri)
-        voices.find((v) => v.lang.startsWith("en-US") && v.name.includes("Samantha")) ||
-        // 6. Karen — Apple female en-AU (very clear and natural)
-        voices.find((v) => v.lang.startsWith("en-AU") && v.name.includes("Karen")) ||
-        // 7. Moira — Apple female en-IE
-        voices.find((v) => v.lang.startsWith("en-IE") && v.name.includes("Moira")) ||
-        // 8. Any local female en-IN voice
-        voices.find((v) => v.lang.startsWith("en-IN") && v.localService && isFemaleVoice(v)) ||
-        // 9. Any female en-IN voice
-        voices.find((v) => (v.lang === "en-IN" || v.lang === "en_IN") && isFemaleVoice(v)) ||
-        // 10. Any local female English voice
-        voices.find((v) => v.lang.startsWith("en-") && v.localService && isFemaleVoice(v)) ||
-        // 11. Google US English (female)
-        voices.find((v) => v.lang === "en-US" && v.name === "Google US English") ||
-        // 12. Any female English voice
-        voices.find((v) => v.lang.startsWith("en-") && isFemaleVoice(v)) ||
-        // 13. Last resort: any English voice
-        voices.find((v) => v.lang.startsWith("en-"));
-    }
+    selectedVoice =
+      // 1. Siri Female en-IN (best: Indian English Siri woman)
+      voices.find((v) => v.lang.startsWith("en-IN") && v.name.includes("Siri") && isFemaleVoice(v)) ||
+      // 2. Veena — Apple female en-IN
+      voices.find((v) => v.lang.startsWith("en-IN") && v.name.includes("Veena")) ||
+      // 3. Siri Female en-GB (UK Siri woman — very smooth)
+      voices.find((v) => v.lang.startsWith("en-GB") && v.name.includes("Siri") && isFemaleVoice(v)) ||
+      // 4. Siri Female en-US (US Siri woman)
+      voices.find((v) => v.lang.startsWith("en-US") && v.name.includes("Siri") && isFemaleVoice(v)) ||
+      // 5. Samantha — Apple premium female en-US (extremely clear, like classic Siri)
+      voices.find((v) => v.lang.startsWith("en-US") && v.name.includes("Samantha")) ||
+      // 6. Karen — Apple female en-AU (very clear and natural)
+      voices.find((v) => v.lang.startsWith("en-AU") && v.name.includes("Karen")) ||
+      // 7. Moira — Apple female en-IE
+      voices.find((v) => v.lang.startsWith("en-IE") && v.name.includes("Moira")) ||
+      // 8. Any local female en-IN voice
+      voices.find((v) => v.lang.startsWith("en-IN") && v.localService && isFemaleVoice(v)) ||
+      // 9. Any female en-IN voice
+      voices.find((v) => (v.lang === "en-IN" || v.lang === "en_IN") && isFemaleVoice(v)) ||
+      // 10. Any local female English voice
+      voices.find((v) => v.lang.startsWith("en-") && v.localService && isFemaleVoice(v)) ||
+      // 11. Google US English (female)
+      voices.find((v) => v.lang === "en-US" && v.name === "Google US English") ||
+      // 12. Any female English voice
+      voices.find((v) => v.lang.startsWith("en-") && isFemaleVoice(v)) ||
+      // 13. Last resort: any English voice
+      voices.find((v) => v.lang.startsWith("en-"));
 
     // Log selected voice
     if (selectedVoice) {
       console.log(`[VoiceAssistant] Selected voice: "${selectedVoice.name}" (${selectedVoice.lang}, local=${selectedVoice.localService})`);
     } else {
-      console.warn("[VoiceAssistant] No voice found for", targetLang);
+      console.warn("[VoiceAssistant] No voice found for English");
     }
 
     // ── Split text into sentence chunks for smooth, natural delivery ──
     // Do NOT split on commas, as that causes unnatural pauses and hesitation.
-    let chunks: string[];
-    if (isHindiText) {
-      // Split on sentence boundaries: danda (।), question mark (?), exclamation (!), period (.)
-      chunks = text
-        .split(/(?<=[।!?.])\s*/)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0);
-    } else {
-      chunks = text
-        .split(/(?<=[.!?])\s+/)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0);
-    }
+    let chunks = text
+      .split(/(?<=[.!?])\s+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
 
     // If splitting produced nothing (no punctuation), use the whole text as one chunk
     if (chunks.length === 0) {
@@ -392,7 +362,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
         utt.voice = selectedVoice;
         utt.lang = selectedVoice.lang;
       } else {
-        utt.lang = isHindiText ? "hi-IN" : "en-IN";
+        utt.lang = "en-IN";
       }
 
       // Native 1.0 rate/pitch for maximum clarity — no resampling artifacts
@@ -440,7 +410,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
     recognitionTranscriptRef.current = "";
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.lang = conversationLangRef.current === "hi" ? "hi-IN" : "en-IN";
+        recognitionRef.current.lang = "en-IN";
         recognitionRef.current.abort();
         setTimeout(() => {
           if (isOpenRef.current) recognitionRef.current.start();
@@ -527,137 +497,62 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
   const handleQuestion = async (text: string) => {
     const cleanQuery = text.toLowerCase().trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "");
 
-    // ── Language Detection & Consistency ──────────────────────────────────────────
-    const switchToEnglish = 
-      cleanQuery.includes("speak in english") || 
-      cleanQuery.includes("in english") || 
-      cleanQuery.includes("english please") || 
-      cleanQuery.includes("switch to english") || 
-      cleanQuery.includes("english mein") || 
-      cleanQuery === "english" ||
-      cleanQuery.includes("angrezi");
-
-    const switchToHindi = 
-      cleanQuery.includes("speak in hindi") || 
-      cleanQuery.includes("in hindi") || 
-      cleanQuery.includes("hindi please") || 
-      cleanQuery.includes("switch to hindi") || 
-      cleanQuery.includes("hindi mein") || 
-      cleanQuery === "hindi";
-
-    const hasDevanagari = /[\u0900-\u097F]/.test(text);
     const words = cleanQuery.split(/\s+/);
-    const hasHindiKeyword = words.some(word => [
-      "hindi", "hind", "kaun", "koun", "kon", "kya", "kia", "batao", "bata", "btao", "bataiye", "bataye",
-      "bol", "bolo", "haan", "han", "ha", "haa", "h", "tum", "aap", "ap", "naam", "nam", "kaam", "kam",
-      "safar", "gana", "ghoom", "parichay", "nokri", "sampark", "samajh", "kaise", "हाँ", "हा", "ह", "हाँजी",
-      "ji haan", "ji han", "han ji", "haan ji", "bilkul", "batao", "tell me more"
-    ].includes(word));
 
-    // Pure continuation words (Hindi or English confirmations and their colloquial versions/short combinations)
+    // Pure continuation words (English confirmations and their colloquial versions/short combinations)
     const confirmationWords = [
-      "yes", "yeah", "yup", "sure", "okay", "ok", "haan", "han", "ha", "h", "haa", "ji haan", "ji han", "han ji", "haan ji", "bilkul", "batao", "continue", "tell me more", "more", "go on",
-      "हाँ", "हा", "ह", "हाँजी", "हाँ जी", "जी हाँ", "जी हा", "बिलकुल", "बताओ", "और बताओ", "आगे बताओ", "बताओ", "और", "आगे", "हाँ बताओ",
-      "हां", "हांजी", "हां जी", "जी हां", "जी हां बताओ", "हां बताओ", "जी हांजी", "hang", "hanh", "haah", "he", "high", "hum", "huh", "un", "ahn", "aah", "ah", "home", "how", "who", "ha "
+      "yes", "yeah", "yup", "sure", "okay", "ok", "continue", "tell me more", "more", "go on"
     ];
 
     const isContinuationOnly = 
       confirmationWords.includes(cleanQuery) ||
       (cleanQuery.split(/\s+/).length <= 2 && words.some(w => [
-        "yes", "yeah", "yup", "sure", "okay", "ok", "haan", "han", "ha", "h", "हाँ", "हां", "batao", "btao", "tell", "sure", "y"
+        "yes", "yeah", "yup", "sure", "okay", "ok", "tell", "sure", "y"
       ].includes(w)));
 
     const isNegativeContinuation = [
-      "no", "n", "nahi", "nhi", "nahin", "नहीं", "ना"
+      "no", "n", "nope", "not really"
     ].includes(cleanQuery);
 
-    let isHindi: boolean;
-    if (switchToEnglish) {
-      isHindi = false;
-    } else if (switchToHindi) {
-      isHindi = true;
-    } else {
-      // Memory Rule 4: Never switch language automatically.
-      // If previous context was Hindi, stay in Hindi unless explicit request to switch.
-      if (conversationLangRef.current === "hi") {
-        isHindi = true;
-      } else {
-        // If previous context was English, check if they started speaking Hindi
-        isHindi = hasDevanagari || hasHindiKeyword;
-      }
-    }
+    // Always keep English
+    conversationLangRef.current = "en";
 
-    // Remember current detected language for next turn
-    conversationLangRef.current = isHindi ? "hi" : "en";
-
-    // ── Negative Continuation: "no" / "nahi" ─────────────────────────────────
+    // ── Negative Continuation ────────────────────────────────────────────────
     if (isNegativeContinuation) {
-      let answer = "";
-      if (isHindi) {
-        answer = "ठीक है, अगर आप अभिषेक के बारे में कुछ और जानना चाहते हैं तो कभी भी पूछ सकते हैं।";
-      } else {
-        answer = "Alright, feel free to ask me any other questions about Abhishek whenever you're ready.";
-      }
+      const answer = "Alright, feel free to ask me any other questions about Abhishek whenever you're ready.";
       setIsThinking(false);
       speakText(answer);
       return;
     }
 
     // ── Continuation: "yes" / "tell me more" ──────────────────────────────────
-    // When user says yes/continue/h, continue from the topic that was last answered
+    // When user says yes/continue/etc., continue from the topic that was last answered
     if (isContinuationOnly) {
       let answer = "";
       const topic = lastTopicRef.current;
-      if (isHindi) {
-        if (topic === "greeting" || topic === "") {
-          // After greeting → give professional introduction
-          lastTopicRef.current = "intro";
-          answer = "अभिषेक कुमार एक Gen AI और Full Stack Developer हैं जिनके पास 7 साल का प्रोफेशनल सॉफ्टवेयर इंजीनियरिंग अनुभव है। वे GenAquarius, R Systems, K-12 Learning Solutions और Virtual Employee जैसी कंपनियों के साथ काम कर चुके हैं। उन्होंने स्केलेबल वेब एप्लीकेशन, एंटरप्राइज़ प्लेटफॉर्म, माइक्रोसर्विसेज़ और क्लाउड-बेस्ड सॉल्यूशन डिज़ाइन किए हैं। उनकी विशेषज्ञता React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS और Generative AI तकनीकों में है। क्या आप आईटी इंडस्ट्री के बाहर अभिषेक की पर्सनल रुचियों के बारे में जानना चाहेंगे?";
-        } else if (topic === "intro") {
-          // After professional intro → give personal interests (Memory Rule 5 target template)
-          lastTopicRef.current = "personal";
-          answer = "अभिषेक को संगीत, ट्रैवलिंग और एडवेंचर का काफी शौक है। उन्हें गिटार बजाना और गाना पसंद है। उन्होंने विभिन्न म्यूजिकल परफॉर्मेंस, बैंड एक्टिविटीज़ और इंडियन आइडल तथा सा रे ग म पा जैसे प्लेटफॉर्म्स के ऑडिशन्स में भी भाग लिया है। इसके अलावा उन्हें उत्तराखंड, अल्मोड़ा और अन्य पहाड़ी क्षेत्रों में घूमना, लंबी राइड्स और रोड ट्रिप्स करना पसंद है। ये गतिविधियाँ उन्हें क्रिएटिव और ऊर्जावान बनाए रखती हैं। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में भी जानना चाहेंगे?";
-        } else if (topic === "personal") {
-          // After personal → give career experience
-          lastTopicRef.current = "experience";
-          answer = "अभिषेक को आईटी सेक्टर में 7 साल का अनुभव है। उन्होंने GenAquarius में Gen AI Developer और R Systems में 4 साल सॉफ्टवेयर डेवलपर के रूप में काम किया। वे React, Next.js, Node.js और Generative AI में एक्सपर्ट हैं। क्या आप उनके स्किल्स और प्रोजेक्ट्स के बारे में जानना चाहेंगे?";
-        } else if (topic === "experience") {
-          // After experience → give skills
-          lastTopicRef.current = "skills";
-          answer = "अभिषेक का टेक्निकल स्टैक बहुत मज़बूत है। फ्रंटेंड में वे React.js, Next.js, Vue.js, Tailwind CSS और Material UI में माहिर हैं। बैकएंड में Node.js, NestJS, REST APIs, GraphQL और RabbitMQ में काम करते हैं। डेटाबेस में PostgreSQL, MongoDB और MySQL का अनुभव है। क्लाउड में Azure DevOps और AWS पर काम किया है। Generative AI में LLM एप्लीकेशन, RAG सिस्टम और Semantic Search में भी एक्सपर्ट हैं। क्या आप उनके प्रोजेक्ट्स के बारे में जानना चाहेंगे?";
-        } else if (topic === "skills") {
-          // After skills → give projects
-          lastTopicRef.current = "projects";
-          answer = "अभिषेक का सबसे बड़ा प्रोजेक्ट Station Casinos Labor System है — एक एंटरप्राइज़ वर्कफ़ोर्स मैनेजमेंट प्लेटफॉर्म जो हज़ारों एम्प्लॉयी के शेड्यूल और लेबर डेटा को मैनेज करता है। इसमें React.js, Next.js, Node.js, NestJS, MongoDB और MySQL का इस्तेमाल हुआ। इसके अलावा Generative AI प्रोजेक्ट्स पर भी काम किया है। क्या आप अभिषेक से संपर्क करने के बारे में जानना चाहेंगे?";
-        } else {
-          lastTopicRef.current = "greeting";
-          answer = "मैं अभिषेक का पर्सनल असिस्टेंट हूँ। आप उनके सॉफ्टवेयर इंजीनियरिंग करियर, स्किल्स, प्रोजेक्ट्स या पर्सनल INTERESTS के बारे में पूछ सकते हैं। क्या आप उनके करियर के बारे में जानना चाहेंगे?";
-        }
+      if (topic === "greeting" || topic === "") {
+        // After greeting → give professional introduction
+        lastTopicRef.current = "intro";
+        answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
+      } else if (topic === "intro") {
+        // After professional intro → give personal interests
+        lastTopicRef.current = "personal";
+        answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
+      } else if (topic === "personal") {
+        // After personal → give career experience
+        lastTopicRef.current = "experience";
+        answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his technical skills?";
+      } else if (topic === "experience") {
+        // After experience → give skills
+        lastTopicRef.current = "skills";
+        answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know about his projects?";
+      } else if (topic === "skills") {
+        // After skills → give projects
+        lastTopicRef.current = "projects";
+        answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know how to contact him?";
       } else {
-        if (topic === "greeting" || topic === "") {
-          // After greeting → give professional introduction
-          lastTopicRef.current = "intro";
-          answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
-        } else if (topic === "intro") {
-          // After professional intro → give personal interests
-          lastTopicRef.current = "personal";
-          answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
-        } else if (topic === "personal") {
-          // After personal → give career experience
-          lastTopicRef.current = "experience";
-          answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his technical skills?";
-        } else if (topic === "experience") {
-          // After experience → give skills
-          lastTopicRef.current = "skills";
-          answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know about his projects?";
-        } else if (topic === "skills") {
-          // After skills → give projects
-          lastTopicRef.current = "projects";
-          answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know how to contact him?";
-        } else {
-          lastTopicRef.current = "greeting";
-          answer = "I'm Abhishek's Portfolio Assistant. You can ask me about his software engineering experience, technical skills, projects, or personal achievements. Would you like to hear about his software engineering career?";
-        }
+        lastTopicRef.current = "greeting";
+        answer = "I'm Abhishek's Portfolio Assistant. You can ask me about his software engineering experience, technical skills, projects, or personal achievements. Would you like to hear about his software engineering career?";
       }
       setIsThinking(false);
       speakText(answer);
@@ -669,151 +564,65 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
     let answer = "";
     let matchedLocally = false;
 
-    if (isHindi) {
-      // Personal interests (Hindi)
-      if (
-        query.includes("personal") || query.includes("hobby") || query.includes("extra") ||
-        query.includes("sing") || query.includes("gana") || query.includes("gata") ||
-        query.includes("idol") || query.includes("guitar") || query.includes("gitar") ||
-        query.includes("travel") || query.includes("safar") || query.includes("ghoom") ||
-        query.includes("music") || query.includes("passion") ||
-        query.includes("पर्सनल") || query.includes("हॉबी") || query.includes("रुचि") || query.includes("रुचियों") ||
-        query.includes("एक्स्ट्रा") || query.includes("गाना") || query.includes("गाते") || query.includes("सा रे ग") ||
-        query.includes("सिंगिंग") || query.includes("गिटार") || query.includes("ट्रैवल") || query.includes("सफ़र") ||
-        query.includes("सफर") || query.includes("घूम") || query.includes("घूमना") || query.includes("म्यूजिक") ||
-        query.includes("संगीत") || query.includes("पैशन")
-      ) {
-        lastTopicRef.current = "personal";
-        answer = "अभिषेक को संगीत, ट्रैवलिंग और एडवेंचर का काफी शौक है। उन्हें गिटार बजाना और गाना पसंद है। उन्होंने विभिन्न म्यूजिकल परफॉर्मेंस, बैंड एक्टिविटीज़ और इंडियन आइडल तथा सा रे ग म पा जैसे प्लेटफॉर्म्स के ऑडिशन्स में भी भाग लिया है। इसके अलावा उन्हें उत्तराखंड, अल्मोड़ा और अन्य पहाड़ी क्षेत्रों में घूमना, लंबी राइड्स और रोड ट्रिप्स करना पसंद है। ये गतिविधियाँ उन्हें क्रिएटिव और ऊर्जावान बनाए रखती हैं। क्या आप उनके सॉफ्टवेयर इंजीनियरिंग करियर के बारे में भी जानना चाहेंगे?";
-        matchedLocally = true;
-      }
-      // Introduction (Hindi)
-      else if (
-        query.includes("who is") || query.includes("kaun") || query.includes("kya hai") ||
-        query.includes("about") || query.includes("abhishek") || query.includes("introduce") ||
-        query.includes("batao") || query.includes("bata") || query.includes("parichay") ||
-        query.includes("कौन") || query.includes("क्या है") || query.includes("बारे में") ||
-        query.includes("परिचय") || query.includes("अभिषेक") || query.includes("इंट्रोड्यूस") ||
-        query.includes("बताओ") || query.includes("बता") || query.includes("बताइये") ||
-        query.includes("बना")
-      ) {
-        lastTopicRef.current = "intro";
-        answer = "अभिषेक कुमार एक Gen AI और Full Stack Developer हैं जिनके पास 7 साल का प्रोफेशनल सॉफ्टवेयर इंजीनियरिंग अनुभव है। वे GenAquarius, R Systems, K-12 Learning Solutions और Virtual Employee जैसी कंपनियों के साथ काम कर चुके हैं। उन्होंने स्केलेबल वेब एप्लीकेशन, एंटरप्राइज़ प्लेटफॉर्म, माइक्रोसर्विसेज़ और क्लाउड-बेस्ड सॉल्यूशन डिज़ाइन किए हैं। उनकी विशेषज्ञता React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS और Generative AI तकनीकों में है। क्या आप आईटी इंडस्ट्री के बाहर अभिषेक की पर्सनल रुचियों के बारे में जानना चाहेंगे?";
-        matchedLocally = true;
-      }
-      // Skills (Hindi)
-      else if (
-        query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
-        query.includes("technology") || query.includes("tech") ||
-        query.includes("frontend") || query.includes("backend") || query.includes("framework") ||
-        query.includes("kya aata") ||
-        query.includes("स्किल्स") || query.includes("स्किल") || query.includes("स्टैक") ||
-        query.includes("टेक्नोलॉजी") || query.includes("तकनीक") || query.includes("टेक") ||
-        query.includes("फ्रंटएंड") || query.includes("बैकएंड") || query.includes("फ्रेमवर्क") ||
-        query.includes("क्या आता")
-      ) {
-        lastTopicRef.current = "skills";
-        answer = "अभिषेक का टेक्निकल स्टैक बहुत मज़बूत है। फ्रंटेंड में वे React.js, Next.js, Vue.js, Tailwind CSS और Material UI में माहिर हैं। बैकएंड में Node.js, NestJS, REST APIs, GraphQL और RabbitMQ में काम करते हैं। डेटाबेस में PostgreSQL, MongoDB और MySQL का अनुभव है। क्लाउड में Azure DevOps और AWS पर काम किया है। Generative AI में LLM एप्लीकेशन, RAG सिस्टम और Semantic Search में भी एक्सपर्ट हैं। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
-        matchedLocally = true;
-      }
-      // Experience (Hindi)
-      else if (
-        query.includes("experience") || query.includes("work") || query.includes("job") ||
-        query.includes("compan") || query.includes("history") || query.includes("kaam") ||
-        query.includes("nokri") || query.includes("career") || query.includes("carrer") || query.includes("carear") ||
-        query.includes("एक्सपीरियंस") || query.includes("अनुभव") || query.includes("काम") ||
-        query.includes("कार्य") || query.includes("जॉब") || query.includes("नौकरी") ||
-        query.includes("नोकरी") || query.includes("कंपनी") || query.includes("कंपनियों") ||
-        query.includes("इतिहास") || query.includes("करियर")
-      ) {
-        lastTopicRef.current = "experience";
-        answer = "अभिषेक को आईटी सेक्टर में 7 साल का अनुभव है। उन्होंने GenAquarius में Gen AI और Full Stack Developer के रूप में काम किया जहाँ उन्होंने LLM और RAG बेस्ड फीचर्स बनाए। R Systems में लगभग 4 साल तक एंटरप्राइज़ Casino Management System पर काम किया। K-12 Learning Solutions में Front End Developer रहे और Virtual Employee में जूनियर डेवलपर के रूप में करियर शुरू किया। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?";
-        matchedLocally = true;
-      }
-      // Projects (Hindi)
-      else if (
-        query.includes("project") || query.includes("casino") || query.includes("k-12") ||
-        query.includes("station") || query.includes("kaam kya") ||
-        query.includes("प्रोजेक्ट") || query.includes("प्रोजेक्ट्स") || query.includes("कैसीनो") ||
-        query.includes("स्टेशन") || query.includes("काम क्या")
-      ) {
-        lastTopicRef.current = "projects";
-        answer = "अभिषेक का सबसे बड़ा प्रोजेक्ट Station Casinos Labor System है — एक एंटरप्राइज़ वर्कफ़ोर्स मैनेजमेंट प्लेटफॉर्म जो हज़ारों एम्प्लॉयी के शेड्यूल और लेबर डेटा को मैनेज करता है। इसमें React.js, Next.js, Node.js, NestJS, MongoDB और MySQL का इस्तेमाल हुआ। इसके अलावा Generative AI प्रोजेक्ट्स पर भी काम किया है। क्या आप उनके पर्सनल INTERESTS के बारे में जानना चाहेंगे?";
-        matchedLocally = true;
-      }
-      // Contact (Hindi)
-      else if (
-        query.includes("contact") || query.includes("email") || query.includes("phone") ||
-        query.includes("reach") || query.includes("number") || query.includes("sampark") ||
-        query.includes("कांटेक्ट") || query.includes("संपर्क") || query.includes("ईमेल") ||
-        query.includes("फोन") || query.includes("नंबर")
-      ) {
-        lastTopicRef.current = "contact";
-        answer = `आप अभिषेक से ${profile.email} ईमेल पर या ${profile.phone} फोन नंबर पर संपर्क कर सकते हैं। वे गाज़ियाबाद, भारत में स्थित हैं। क्या आप उनके पर्सनल इंटरेस्ट्स के बारे में जानना चाहेंगे?`;
-        matchedLocally = true;
-      }
-    } else {
-      // English path
-      // Personal interests (English)
-      if (
-        query.includes("personal") || query.includes("hobby") ||
-        query.includes("extra") || query.includes("interest") || query.includes("sing") ||
-        query.includes("song") || query.includes("music") || query.includes("idol") ||
-        query.includes("guitar") || query.includes("travel") || query.includes("trip") ||
-        query.includes("passion") || query.includes("sa re ga")
-      ) {
-        lastTopicRef.current = "personal";
-        answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
-        matchedLocally = true;
-      }
-      // Introduction (English)
-      else if (
-        query.includes("who is") || query.includes("about") || query.includes("abhishek") ||
-        query.includes("introduce") || query.includes("bio") || query.includes("profile") ||
-        query.includes("tell me")
-      ) {
-        lastTopicRef.current = "intro";
-        answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
-        matchedLocally = true;
-      }
-      // Skills (English)
-      else if (
-        query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
-        query.includes("technology") || query.includes("tech") ||
-        query.includes("frontend") || query.includes("backend") || query.includes("framework") ||
-        query.includes("expertise")
-      ) {
-        lastTopicRef.current = "skills";
-        answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know more about his personal interests?";
-        matchedLocally = true;
-      }
-      // Experience (English)
-      else if (
-        query.includes("experience") || query.includes("work") || query.includes("job") ||
-        query.includes("compan") || query.includes("history") || query.includes("career")
-      ) {
-        lastTopicRef.current = "experience";
-        answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his personal interests outside the IT sector?";
-        matchedLocally = true;
-      }
-      // Projects (English)
-      else if (
-        query.includes("project") || query.includes("casino") || query.includes("station") ||
-        query.includes("k-12") || query.includes("built") || query.includes("worked on")
-      ) {
-        lastTopicRef.current = "projects";
-        answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know about his personal interests?";
-        matchedLocally = true;
-      }
-      // Contact (English)
-      else if (
-        query.includes("contact") || query.includes("email") || query.includes("phone") ||
-        query.includes("reach") || query.includes("number") || query.includes("mail")
-      ) {
-        lastTopicRef.current = "contact";
-        answer = `You can reach Abhishek at ${profile.email} or call him at ${profile.phone}. He is located in Ghaziabad, India. Would you like to know more about his personal interests?`;
-        matchedLocally = true;
-      }
+    // Personal interests (English)
+    if (
+      query.includes("personal") || query.includes("hobby") ||
+      query.includes("extra") || query.includes("interest") || query.includes("sing") ||
+      query.includes("song") || query.includes("music") || query.includes("idol") ||
+      query.includes("guitar") || query.includes("travel") || query.includes("trip") ||
+      query.includes("passion") || query.includes("sa re ga")
+    ) {
+      lastTopicRef.current = "personal";
+      answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
+      matchedLocally = true;
+    }
+    // Introduction (English)
+    else if (
+      query.includes("who is") || query.includes("about") || query.includes("abhishek") ||
+      query.includes("introduce") || query.includes("bio") || query.includes("profile") ||
+      query.includes("tell me")
+    ) {
+      lastTopicRef.current = "intro";
+      answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
+      matchedLocally = true;
+    }
+    // Skills (English)
+    else if (
+      query.includes("skill") || query.includes("stack") || query.includes("technolog") ||
+      query.includes("technology") || query.includes("tech") ||
+      query.includes("frontend") || query.includes("backend") || query.includes("framework") ||
+      query.includes("expertise")
+    ) {
+      lastTopicRef.current = "skills";
+      answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know more about his personal interests?";
+      matchedLocally = true;
+    }
+    // Experience (English)
+    else if (
+      query.includes("experience") || query.includes("work") || query.includes("job") ||
+      query.includes("compan") || query.includes("history") || query.includes("career")
+    ) {
+      lastTopicRef.current = "experience";
+      answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his personal interests outside the IT sector?";
+      matchedLocally = true;
+    }
+    // Projects (English)
+    else if (
+      query.includes("project") || query.includes("casino") || query.includes("station") ||
+      query.includes("k-12") || query.includes("built") || query.includes("worked on")
+    ) {
+      lastTopicRef.current = "projects";
+      answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know about his personal interests?";
+      matchedLocally = true;
+    }
+    // Contact (English)
+    else if (
+      query.includes("contact") || query.includes("email") || query.includes("phone") ||
+      query.includes("reach") || query.includes("number") || query.includes("mail")
+    ) {
+      lastTopicRef.current = "contact";
+      answer = `You can reach Abhishek at ${profile.email} or call him at ${profile.phone}. He is located in Ghaziabad, India. Would you like to know more about his personal interests?`;
+      matchedLocally = true;
     }
 
     if (matchedLocally) {
@@ -823,32 +632,17 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
     }
 
     // Try LLM next
-    let promptWithLang = text;
-    if (isHindi) {
-      promptWithLang += " (Please respond in Hindi/हिंदी)";
-    }
-    const llmAnswer = await fetchLLMResponse(promptWithLang);
+    const llmAnswer = await fetchLLMResponse(text);
     if (llmAnswer) {
       setIsThinking(false);
-      // Keep conversation language consistent
-      if (isHindi) {
-        conversationLangRef.current = "hi";
-      } else {
-        const llmIsHindi = /[\u0900-\u097F]/.test(llmAnswer);
-        conversationLangRef.current = llmIsHindi ? "hi" : "en";
-      }
+      conversationLangRef.current = "en";
       speakText(llmAnswer);
       return;
     }
 
     // Fallback if LLM fails and no local QA matched
-    if (isHindi) {
-      lastTopicRef.current = "greeting";
-      answer = "मैं अभिषेक का पर्सनल असिस्टेंट हूँ। आप उनके सॉफ्टवेयर इंजीनियरिंग करियर, स्किल्स, प्रोजेक्ट्स या पर्सनल INTERESTS के बारे में पूछ सकते हैं। क्या आप उनके करियर के बारे में जानना चाहेंगे?";
-    } else {
-      lastTopicRef.current = "greeting";
-      answer = "I'm Abhishek's Portfolio Assistant. You can ask me about his career, skills, projects, or personal interests. Would you like to hear about his software engineering career?";
-    }
+    lastTopicRef.current = "greeting";
+    answer = "I'm Abhishek's Portfolio Assistant. You can ask me about his career, skills, projects, or personal interests. Would you like to hear about his software engineering career?";
 
     setIsThinking(false);
     speakText(answer);
