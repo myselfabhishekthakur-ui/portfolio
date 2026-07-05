@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const videoSrc = `${basePath}/video/intro.mp4`;
+
 export default function FloatingVideoPlayer() {
   const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -175,7 +178,7 @@ export default function FloatingVideoPlayer() {
             <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden">
               <video
                 ref={videoRef}
-                src="/video/intro.mp4"
+                src={videoSrc}
                 loop
                 muted={isMuted}
                 playsInline
