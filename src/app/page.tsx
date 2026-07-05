@@ -7,6 +7,7 @@ import Projects from "@/components/Projects";
 import Skills from "@/components/Skills";
 import Contact from "@/components/Contact";
 import VoiceAssistant from "@/components/VoiceAssistant";
+import FloatingVideoPlayer from "@/components/FloatingVideoPlayer";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Skills />
       <Contact />
       <VoiceAssistant />
+      <FloatingVideoPlayer />
     </>
   );
 }
