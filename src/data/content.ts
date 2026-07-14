@@ -239,6 +239,66 @@ export const projects: Project[] = [
     roadmap: ["Add module imports and async/await tracing.", "Visualize closures and lexically nested scopes."],
   },
   {
+    name: "Teleprompt Pro",
+    category: "Mobile App · React Native",
+    blurb: "Professional video recording studio with high-performance autoscrolling teleprompter and real-time overlays.",
+    role: "Lead Developer",
+    timeline: "2026",
+    images: [
+      asset("/teleprompt-home.png"),
+      asset("/teleprompt-settings.png"),
+      asset("/teleprompt-create.jpg"),
+      asset("/teleprompt-camera.jpg"),
+    ],
+    stats: [
+      { value: "4K", label: "VIDEO CAPTURE" },
+      { value: "60 FPS", label: "SMOOTH SCROLLING" },
+      { value: "8", label: "LIVE FILTERS" },
+    ],
+    overview:
+      "Teleprompt Pro is a professional, high-performance video recording studio and teleprompter application built for mobile content creators, anchors, and presenters. The app allows users to write or import scripts and read them from a smooth, custom-scrolling overlay while recording high-definition video (up to 4K) using front or back cameras. By placing the scrolling text close to the camera lens and offering advanced configuration options (like horizontal text mirroring and countdown timers), it ensures that presenters maintain natural, direct eye contact with their audience.",
+    problem:
+      "Content creators struggle to record high-quality videos while reading long scripts. Looking away from the lens to check notes breaks audience engagement, and traditional recording setups require expensive, bulky teleprompter hardware or external monitors.",
+    features: [
+      { title: "Smart Teleprompter Overlay", description: "Placed at the top near the camera sensor to help creators maintain natural eye contact during recordings." },
+      { title: "Autoscrolling Engine", description: "Stutter-free scrolling powered by react-native-reanimated running on the UI thread with customizable speeds." },
+      { title: "High-Definition Capture", description: "Supports video recording up to 4K resolution (2160p) with camera facings and torch options." },
+      { title: "Live Video Filters", description: "8 real-time visual filter overlays (like Cinematic Teal, Sunset Glow, Noir) with SVG vignettes." },
+      { title: "Physical Rig Support", description: "Horizontal text mirroring option to accommodate professional physical glass/mirror teleprompter hardware." },
+      { title: "Script Manager", description: "Interactive editor with real-time word and character counters, quick creation, and deletion." },
+    ],
+    tech: {
+      frontend: ["React Native", "TypeScript", "Expo (SDK 54)", "Reanimated", "Expo Camera", "SVG"],
+      backend: ["Offline First"],
+      database: ["On-device Storage"],
+    },
+    isPersonal: true,
+    challenges: [
+      {
+        challenge: "Teleprompter text truncation on large scripts due to GPU texture size limits on rendering single large Text blocks.",
+        solution: "Implemented a word-count-based chunking algorithm that splits scripts into paragraphs of 150 words maximum and renders them as separate sequential text elements.",
+      },
+      {
+        challenge: "Videos recorded with the front-facing camera appeared reversed when played back, mismatching the live-mirrored preview.",
+        solution: "Adjusted camera preview and saving configuration to ensure recorded output matching the live mirrored orientation.",
+      },
+      {
+        challenge: "Native camera simulator crashes on iOS Xcode or Android simulators due to missing physical camera hardware.",
+        solution: "Configured useCamera hook error boundaries to detect emulator environments and gracefully fall back to a mock recording mode for testing.",
+      },
+    ],
+    learnings: [
+      "Optimizing heavy UI tasks like 60fps autoscrolling on the UI thread while capturing 4K video streams.",
+      "Handling dynamic file permissions, front/back camera configurations, and video output mirroring in React Native.",
+      "Adapting mobile applications for physical hardware integrations (mirror teleprompt rigs).",
+    ],
+    roadmap: [
+      "Voice-activation (autoscroll follows speaker's speech rate).",
+      "Dynamic background music integration and audio waveform visualizers.",
+      "Cloud script syncing and team sharing dashboard.",
+    ],
+  },
+  {
     name: "Station Casinos Labor System",
     category: "Enterprise · Full Stack",
     blurb: "Workforce management platform for Station Casinos.",
