@@ -38,7 +38,7 @@ Your primary goal is to answer visitor questions naturally, professionally, and 
 ABOUT ABHISHEK KUMAR
 ========================
 
-Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience.
+Abhishek Kumar is a Full Stack Developer with 7 years of professional software engineering experience.
 
 He specializes in building scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions.
 
@@ -56,20 +56,20 @@ He has experience in: Frontend Development, Backend Development, Full Stack Arch
 PROFESSIONAL SUMMARY
 ========================
 
-Abhishek Kumar is a Full Stack and Gen AI Developer with 7 years of experience building scalable web applications and enterprise-grade systems. He has worked extensively with React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and modern Generative AI technologies. He has successfully delivered enterprise workforce management systems, modern frontend applications, backend microservices, REST APIs, and AI-powered solutions. He is experienced in designing scalable architectures, optimizing application performance, integrating cloud services, and delivering production-ready applications.
+Abhishek Kumar is a Full Stack Developer with 7 years of experience building scalable web applications and enterprise-grade systems. He has worked extensively with React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies. He has successfully delivered enterprise workforce management systems, modern frontend applications, backend microservices, REST APIs, and optimized web solutions. He is experienced in designing scalable architectures, optimizing application performance, integrating cloud services, and delivering production-ready applications.
 
 ========================
 WORK EXPERIENCE
 ========================
 
-1. GenAquarius — Full Stack Developer (Gen AI) | Oct 2025 – Mar 2026
+1. GenAquarius — Senior Full Stack Developer | Oct 2025 – Mar 2026
    - Continued development of Station Casinos Labor System
    - Built React.js and Next.js applications
    - Integrated REST APIs
-   - Worked on Generative AI solutions including LLM and RAG-based features
+   - Integrated LLM and RAG pipelines to automate workflows, and built an interactive chatbot
    - Maintained enterprise applications after migration from R Systems
 
-2. R Systems — Software Developer | Dec 2021 – Oct 2025
+2. R Systems — Senior Software Developer | Dec 2021 – Oct 2025
    - End-to-end feature ownership of enterprise casino management systems
    - React.js and Next.js development with SSR and performance optimization
    - Node.js and NestJS backend development and microservices architecture
@@ -103,7 +103,7 @@ PERSONAL INTERESTS & EXTRACURRICULAR ACTIVITIES
 ========================
 (ONLY share when explicitly asked by the user)
 
-Outside of software engineering, Abhishek is passionate about music, travelling, and adventure. Music has been an important part of his life for many years, and he enjoys singing and playing guitar in his free time. He has participated in musical performances, band activities, and reality-show auditions, including platforms such as Indian Idol and Sa Re Ga Ma Pa. Beyond music, he enjoys exploring mountain destinations, scenic routes, and new cultures. Uttarakhand, including places such as Almora and other hill regions, is among his favorite travel destinations. He enjoys: Travelling, Riding, Road Trips, Nature Exploration, Guitar, Singing, Adventure Activities. These experiences help him stay creative, energetic, and maintain a healthy work-life balance.
+Outside of software engineering, Abhishek is passionate about music, traveling, and adventure. Music has been an important part of his life for many years, and he enjoys singing and playing guitar in his free time. He has participated in musical performances, band activities, and reality-show auditions, including platforms such as Indian Idol and Sa Re Ga Ma Pa. Beyond music, he enjoys exploring mountain destinations, scenic routes, and new cultures. Uttarakhand, including places such as Almora and other hill regions, is among his favorite travel destinations. He enjoys: Traveling, Riding, Road Trips, Nature Exploration, Guitar, Singing, Adventure Activities. These experiences help him stay creative, energetic, and maintain a healthy work-life balance.
 
 ========================
 CONTACT INFORMATION
@@ -125,16 +125,16 @@ RULE 2 — PROFESSIONAL INTRODUCTION:
 When a user asks: "Who is Abhishek?", "Tell me about Abhishek", "Introduce yourself", "About Abhishek", "Experience", "Career", or "Work history" — ONLY provide professional information. Do NOT mention singing, guitar, Indian Idol, travel, hobbies, or extracurricular activities.
 
 Professional Introduction Template:
-"Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems and enterprise applications used by thousands of users."
+"Abhishek Kumar is a Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems and enterprise applications used by thousands of users."
 
 After professional answer ask:
 "Would you like to know about Abhishek's personal interests and achievements outside the IT industry?"
 
 RULE 3 — PERSONAL INTERESTS (only when explicitly asked):
-ONLY discuss personal interests when the user explicitly asks about: hobbies, personal life, extracurricular, interests, music, singing, guitar, Indian Idol, Sa Re Ga Ma Pa, travel, travelling, passion — OR says "yes" after the follow-up question.
+ONLY discuss personal interests when the user explicitly asks about: hobbies, personal life, extracurricular, interests, music, singing, guitar, Indian Idol, Sa Re Ga Ma Pa, travel, traveling, passion — OR says "yes" after the follow-up question.
 
 Personal Interests Template:
-"Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle alongside his software engineering career."
+"Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys traveling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle alongside his software engineering career."
 
 After personal interests answer ask:
 "Would you like to hear about his software engineering career and technical expertise?"
@@ -533,15 +533,15 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       if (topic === "greeting" || topic === "") {
         // After greeting → give professional introduction
         lastTopicRef.current = "intro";
-        answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
+        answer = "Abhishek Kumar is a Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
       } else if (topic === "intro") {
         // After professional intro → give personal interests
         lastTopicRef.current = "personal";
-        answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
+        answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys traveling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
       } else if (topic === "personal") {
         // After personal → give career experience
         lastTopicRef.current = "experience";
-        answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his technical skills?";
+        answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Developer building web applications, integrating LLM/RAG features, and building an interactive chatbot. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his technical skills?";
       } else if (topic === "experience") {
         // After experience → give skills
         lastTopicRef.current = "skills";
@@ -573,7 +573,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       query.includes("passion") || query.includes("sa re ga")
     ) {
       lastTopicRef.current = "personal";
-      answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys travelling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
+      answer = "Outside of software engineering, Abhishek is an accomplished singer and guitarist who has performed on Indian Idol and Sa Re Ga Ma Pa. Apart from technology, he is passionate about music, live performances, and creative expression. He also enjoys traveling, especially mountain road trips and exploring scenic destinations across India, particularly Uttarakhand and hill regions. These activities help him maintain creativity, discipline, and a balanced lifestyle. Would you like to hear about his software engineering career and technical expertise?";
       matchedLocally = true;
     }
     // Introduction (English)
@@ -583,7 +583,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       query.includes("tell me")
     ) {
       lastTopicRef.current = "intro";
-      answer = "Abhishek Kumar is a Gen AI and Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
+      answer = "Abhishek Kumar is a Full Stack Developer with 7 years of professional software engineering experience. He has worked with organizations including GenAquarius, R Systems, K-12 Learning Solutions, and Virtual Employee. Throughout his career, he has designed and developed scalable web applications, enterprise platforms, microservices, and modern cloud-based solutions. His expertise includes React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies such as LLMs, RAG systems, AI Agents, and Semantic Search. He has successfully delivered large-scale workforce management systems used by thousands of users. Would you like to know about Abhishek's personal interests and achievements outside the IT industry?";
       matchedLocally = true;
     }
     // Skills (English)
@@ -603,7 +603,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       query.includes("compan") || query.includes("history") || query.includes("career")
     ) {
       lastTopicRef.current = "experience";
-      answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Gen AI Developer building LLM and RAG-based features. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his personal interests outside the IT sector?";
+      answer = "Abhishek has 7 years of software engineering experience. At GenAquarius he worked as a Full Stack Developer building web applications, integrating LLM/RAG features, and building an interactive chatbot. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked at K-12 Learning Solutions and started his career at Virtual Employee. Would you like to know more about his personal interests outside the IT sector?";
       matchedLocally = true;
     }
     // Projects (English)

@@ -13,7 +13,7 @@ export const profile = {
   name: "Abhishek Kumar",
   // Big scrolling text across the bottom of the hero.
   marquee: "ABHISHEK KUMAR",
-  eyebrow: "GEN AI · FULL STACK DEVELOPER",
+  eyebrow: "FULL STACK DEVELOPER",
   headline: ["Building Scalable", "Web Applications"],
   // Portrait shown in the hero (lives in /public).
   photo: asset("/portrait.png"),
@@ -34,7 +34,7 @@ export const nav = [
 
 export const about = {
   paragraph:
-    "I'm a Full Stack Developer with 7 years of experience building scalable web applications, with strong expertise in React.js, Next.js, and modern frontend architecture. I develop high-performance UI components and integrate them with robust backend services built using Node.js and NestJS. I spent almost four years across R Systems and GenAquarius contributing to enterprise-grade systems for Station Casinos — building both frontend applications and backend APIs. Skilled across the React ecosystem, API integrations, performance optimization, and microservice-based backend development, I thrive in Agile teams, collaborating with designers, backend engineers, and product stakeholders to deliver reliable, scalable solutions. I'm currently exploring Generative AI and integrating LLM/RAG-based features into modern applications. Outside of tech, I am an avid guitarist and singer, having performed on Indian Idol and various other reality shows, and I have a deep passion for travelling.",
+    "I'm a Full Stack Developer with 7 years of experience building scalable web applications, with strong expertise in React.js, Next.js, and modern frontend architecture. I develop high-performance UI components and integrate them with robust backend services built using Node.js and NestJS. I spent almost four years across R Systems and GenAquarius contributing to enterprise-grade systems for Station Casinos — building both frontend applications and backend APIs. Skilled across the React ecosystem, API integrations, performance optimization, and microservice-based backend development, I thrive in Agile teams, collaborating with designers, backend engineers, and product stakeholders to deliver reliable, scalable solutions. Outside of tech, I am an avid guitarist and singer, having performed on Indian Idol and various other reality shows, and I have a deep passion for traveling.",
 };
 
 export type Experience = {
@@ -49,15 +49,15 @@ export type Experience = {
 
 export const experience: Experience[] = [
   {
-    role: "Full Stack Developer (Gen AI)",
+    role: "Senior Full Stack Developer",
     company: "GenAquarius",
     period: "Oct 2025 — Mar 2026",
     description:
-      "Contract → Full-time (Feb 2026) · Continued the Station Casinos Labor System after its migration from R Systems, ensuring smooth functionality and ongoing feature development. Built web apps with React.js and Next.js, integrated REST APIs, and explored Generative AI — integrating LLM/RAG-based features into applications.",
+      "Contract → Full-time (Feb 2026) · Continued development of the Station Casinos Labor System after its migration from R Systems, ensuring & maintaining smooth functionality. Developed web applications with React.js and Next.js, integrated REST APIs, and built features (including LLM and RAG integrations) to automate workflows, including an interactive chatbot.",
     badge: "G",
   },
   {
-    role: "Software Developer",
+    role: "Senior Software Developer",
     company: "R Systems",
     period: "Dec 2021 — Oct 2025",
     description:
@@ -312,13 +312,13 @@ export const projects: Project[] = [
       { value: "Enterprise", label: "SCALE" },
     ],
     overview:
-      "An enterprise Labor System that manages team availability, schedule creation, and labour-data volume tracking for workforce planning. I built and maintained the platform across its migration from R Systems to GenAquarius, ensuring continuity of features and reliability.",
+      "An enterprise Labor System that manages team availability, schedule creation, and labor-data volume tracking for workforce planning. I built and maintained the platform across its migration from R Systems to GenAquarius, ensuring continuity of features and reliability.",
     problem:
-      "Casino operations require dependable workforce planning across large teams. The Labor System centralizes availability, scheduling and labour-volume tracking into a single, performant interface.",
+      "Casino operations require dependable workforce planning across large teams. The Labor System centralizes availability, scheduling and labor-volume tracking into a single, performant interface.",
     features: [
       { title: "Team Availability", description: "Manage staff availability across shifts and roles." },
       { title: "Schedule Creation", description: "Build, edit and publish workforce schedules." },
-      { title: "Labour Data Tracking", description: "Track labour volume for accurate planning." },
+      { title: "Labor Data Tracking", description: "Track labor volume for accurate planning." },
       { title: "SSR & Performance", description: "Next.js server-side rendering for fast loads." },
     ],
     tech: {
