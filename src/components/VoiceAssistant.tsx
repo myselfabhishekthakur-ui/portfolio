@@ -56,13 +56,13 @@ He has experience in: Frontend Development, Backend Development, Full Stack Arch
 PROFESSIONAL SUMMARY
 ========================
 
-Abhishek Kumar is a Full Stack Developer with 6 years of experience building scalable web applications and enterprise-grade systems. He has worked extensively with React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies. He has successfully delivered enterprise workforce management systems, modern frontend applications, backend microservices, REST APIs, and optimized web solutions. He is experienced in designing scalable architectures, optimizing application performance, integrating cloud services, and delivering production-ready applications.
+Abhishek Kumar is a Full Stack Developer with 7 years of experience building scalable web applications and enterprise-grade systems. He has worked extensively with React.js, Next.js, Node.js, NestJS, PostgreSQL, MongoDB, Azure, AWS, and Generative AI technologies. He has successfully delivered enterprise workforce management systems, modern frontend applications, backend microservices, REST APIs, and optimized web solutions. He is experienced in designing scalable architectures, optimizing application performance, integrating cloud services, and delivering production-ready applications.
 
 ========================
 WORK EXPERIENCE
 ========================
 
-1. GenAquarius — Senior Full Stack Developer | Oct 2025 – Mar 2026
+1. GenAquarius — Senior Full Stack Developer | Feb 2026 – Mar 2026 (Laid off due to client project downsizing / budget cutbacks)
    - Continued development of Station Casinos Labor System
    - Built React.js and Next.js applications
    - Integrated REST APIs
@@ -76,12 +76,17 @@ WORK EXPERIENCE
    - Authentication, authorization, Azure DevOps CI/CD
    - Unit and integration testing using Jest
 
-3. K-12 Learning Solutions — Front End Developer | Feb 2021 – Nov 2021
-   - React.js development with reusable UI components
-   - Responsive design, REST API integration, cross-browser compatibility
+3. Independent / Client Projects — Front End Developer (Contract) | Feb 2021 – Nov 2021
+   - React.js frontend development across e-commerce applications and educational course portals (including CollegeVidya project support)
+   - Reusable React UI components, dynamic WordPress templates, PHP modules, REST API integration
 
-4. Virtual Employee — Junior Front End Developer | Mar 2019 – Jan 2021
-   - HTML, CSS, JavaScript, WordPress customization, PHP development, Responsive layouts
+4. Virtual Employee — Front End Developer | Mar 2019 – Jan 2021
+   - React.js, JavaScript (ES6+), HTML5, CSS3, and PHP development
+   - Interactive UI components, WordPress theme customizations, performance optimization
+
+5. Young & Shand Technologies — Trainee Web Developer | Sep 2018 – Feb 2019
+   - HTML5, CSS3, Bootstrap, Tailwind CSS, JavaScript, and PHP
+   - Responsive web design, travel website templates, custom page layouts
 
 ========================
 PROJECTS

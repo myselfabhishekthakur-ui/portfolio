@@ -34,7 +34,7 @@ export const nav = [
 
 export const about = {
   paragraph:
-    "I'm a Full Stack Developer with 6 years of experience building scalable web applications, with strong expertise in React.js, Next.js, and modern frontend architecture. I develop high-performance UI components and integrate them with robust backend services built using Node.js and NestJS. I spent almost four years across R Systems and GenAquarius contributing to enterprise-grade systems for Station Casinos — building both frontend applications and backend APIs. Skilled across the React ecosystem, API integrations, performance optimization, and microservice-based backend development, I thrive in Agile teams, collaborating with designers, backend engineers, and product stakeholders to deliver reliable, scalable solutions. Outside of tech, I am an avid guitarist and singer, having performed on Indian Idol and various other reality shows, and I have a deep passion for traveling.",
+    "I'm a Full Stack Developer with 7 years of experience building scalable web applications, with strong expertise in React.js, Next.js, and modern frontend architecture. I develop high-performance UI components and integrate them with robust backend services built using Node.js and NestJS. I spent almost four years across R Systems and GenAquarius contributing to enterprise-grade systems for Station Casinos — building both frontend applications and backend APIs. Skilled across the React ecosystem, API integrations, performance optimization, and microservice-based backend development, I thrive in Agile teams, collaborating with designers, backend engineers, and product stakeholders to deliver reliable, scalable solutions. Outside of tech, I am an avid guitarist and singer, having performed on Indian Idol and various other reality shows, and I have a deep passion for traveling.",
 };
 
 export type Experience = {
@@ -51,9 +51,9 @@ export const experience: Experience[] = [
   {
     role: "Senior Full Stack Developer",
     company: "GenAquarius",
-    period: "Oct 2025 — Mar 2026",
+    period: "Feb 2026 — Mar 2026",
     description:
-      "Contract → Full-time (Feb 2026) · Continued development of the Station Casinos Labor System after its migration from R Systems, ensuring & maintaining smooth functionality. Developed web applications with React.js and Next.js, integrated REST APIs, and built features (including LLM and RAG integrations) to automate workflows, including an interactive chatbot.",
+      "Continued development of the Station Casinos Labor System after its migration from R Systems. Role impacted due to client project downsizing and budget cutbacks. Developed web applications with React.js and Next.js, integrated REST APIs, and built features (including LLM and RAG integrations) to automate workflows, including an interactive chatbot.",
     badge: "G",
   },
   {
@@ -61,24 +61,32 @@ export const experience: Experience[] = [
     company: "R Systems",
     period: "Dec 2021 — Oct 2025",
     description:
-      "Owned end-to-end feature delivery for enterprise casino management systems. Built reusable React.js/Next.js UI with SSR and performance optimization, designed Node.js + NestJS backend services and microservices, implemented auth and API error handling, set up CI/CD in Azure DevOps, and wrote unit/integration tests with Jest.",
+      "Architected enterprise casino management systems (50,000+ users) using Next.js Microfrontends (Shell + iframe apps) and event-driven NestJS microservices. Implemented inter-app messaging via window.postMessage, RabbitMQ event streams, Adapter microservices (Konami, GAN, IGT, Trustly), Azure AD B2C auth, shared npm libraries, and Azure DevOps CI/CD pipelines.",
     badge: "R",
   },
   {
-    role: "Front End Developer",
-    company: "K-12 Learning Solutions",
+    role: "Front End Developer (Contract)",
+    company: "Independent / Client Projects",
     period: "Feb 2021 — Nov 2021",
     description:
-      "Developed responsive user interfaces with React.js, HTML5, CSS3 and JavaScript. Built reusable components, implemented dynamic data rendering and REST API integration, and ensured cross-browser compatibility across devices.",
-    badge: "K",
+      "Delivered responsive React.js and frontend solutions for e-commerce platforms and educational course portals (including CollegeVidya project support). Built reusable React UI components, integrated REST APIs, customized WordPress templates, and optimized rendering performance during remote project engagements.",
+    badge: "C",
   },
   {
-    role: "Junior Front End Developer",
+    role: "Front End Developer",
     company: "Virtual Employee",
     period: "Mar 2019 — Jan 2021",
     description:
-      "Built responsive front-end layouts with HTML, CSS and JavaScript from design mockups, customized WordPress themes using PHP, created reusable UI, optimized performance, and managed source code with Git.",
+      "Developed responsive user interfaces and web features using React.js, JavaScript (ES6+), HTML5, CSS3, and PHP. Customized WordPress themes, implemented dynamic data rendering, optimized frontend performance, and managed code repositories via Git.",
     badge: "V",
+  },
+  {
+    role: "Web Developer",
+    company: "Young & Shand Technologies",
+    period: "Sep 2018 — Feb 2019",
+    description:
+      "Designed and developed responsive web layouts using HTML5, CSS3, Bootstrap, Tailwind CSS, JavaScript, and PHP. Built custom page templates for travel websites and business client portals, ensuring mobile responsiveness and cross-browser compatibility.",
+    badge: "Y",
   },
 ];
 
@@ -299,48 +307,52 @@ export const projects: Project[] = [
     ],
   },
   {
-    name: "Station Casinos Labor System",
-    category: "Enterprise · Full Stack",
-    blurb: "Workforce management platform for Station Casinos.",
-    role: "Full Stack Developer",
+    name: "Station Casinos Enterprise Management Platform",
+    category: "Enterprise · Full Stack Architecture",
+    blurb: "Enterprise casino management and workforce platform built on Next.js Microfrontends (Shell + Iframes) and NestJS Event-Driven Microservices.",
+    role: "Senior Full Stack Developer",
     timeline: "2021 — 2026",
     demo: "https://stationcasinos.com/",
     images: [],
     stats: [
       { value: "4+ Yrs", label: "PROJECT SPAN" },
-      { value: "6", label: "TEAM SIZE" },
-      { value: "Enterprise", label: "SCALE" },
+      { value: "50,000+", label: "ACTIVE USERS" },
+      { value: "8+", label: "MICROSERVICES" },
     ],
     overview:
-      "An enterprise Labor System that manages team availability, schedule creation, and labor-data volume tracking for workforce planning. I built and maintained the platform across its migration from R Systems to GenAquarius, ensuring continuity of features and reliability.",
+      "An enterprise casino management and workforce platform for Station Casinos serving 50,000+ users. Architected using Next.js Microfrontends (Shell application hosting independent iframe modules) and an event-driven NestJS backend microservice architecture with RabbitMQ event queues.",
     problem:
-      "Casino operations require dependable workforce planning across large teams. The Labor System centralizes availability, scheduling and labor-volume tracking into a single, performant interface.",
+      "Managing casino workforce scheduling, availability, rating calculations, real-time gaming data, and payment flows across disparate third-party systems required an isolated, highly scalable, and independently deployable microfrontend and microservice architecture.",
     features: [
-      { title: "Team Availability", description: "Manage staff availability across shifts and roles." },
-      { title: "Schedule Creation", description: "Build, edit and publish workforce schedules." },
-      { title: "Labor Data Tracking", description: "Track labor volume for accurate planning." },
-      { title: "SSR & Performance", description: "Next.js server-side rendering for fast loads." },
+      { title: "Microfrontend Architecture (Shell + Iframes)", description: "Independent Next.js applications hosted inside a central Shell app using iframes, allowing teams to build, deploy, and release features autonomously without cross-application risk." },
+      { title: "Inter-Iframe Messaging Service", description: "Engineered a centralized Messaging Service leveraging window.postMessage for secure cross-iframe communication, event dispatching, customer context syncing, and cross-app page routing." },
+      { title: "Shared Core npm Library", description: "Created a private npm package containing reusable React hooks, auth/customer context providers, and messaging handlers to eliminate code duplication across microfrontends." },
+      { title: "Event-Driven Backend (NestJS + RabbitMQ)", description: "Built event-driven NestJS microservices utilizing RabbitMQ event streams for asynchronous processing (Rating, Awards, Jackpot, Customer Sync) alongside versioned REST APIs (v1/v2/v3)." },
+      { title: "Adapter Microservice Pattern", description: "Decoupled third-party gaming and payment integrations (Konami, GAN, IGT, Trustly webhooks, CaseIQ) using isolated adapter microservices to safeguard core business logic." },
+      { title: "Azure AD B2C Auth & JWT Tokens", description: "Implemented Azure AD B2C authentication, OTP verification, JWT access/refresh token rotation, and Axios interceptors for automated header injection and centralized error handling." },
+      { title: "Runtime Environment Configs (__ENV.js)", description: "Configured dynamic environment value loading via __ENV.js, enabling environment property changes across deployments without rebuilding application containers." },
+      { title: "Customer Context & State Sync", description: "Centralized customer profile state sharing across microfrontends using a Customer Context Provider and debounced messaging to eliminate redundant API requests." },
     ],
     tech: {
-      frontend: ["React", "Next.js", "Material UI"],
-      backend: ["Node.js", "NestJS", "REST APIs"],
-      database: ["MongoDB", "MySQL"],
+      frontend: ["React", "Next.js", "TypeScript", "Material UI", "Redux Toolkit", "PostMessage API"],
+      backend: ["Node.js", "NestJS", "RabbitMQ", "REST APIs (v1/v2/v3)", "Axios Interceptors"],
+      database: ["MongoDB", "MySQL", "Azure AD B2C"],
     },
     challenges: [
       {
-        challenge: "Maintaining functionality through a company migration (R Systems → GenAquarius)",
-        solution: "Ensured a smooth handover with thorough documentation, tests, and continued feature development.",
+        challenge: "Synchronizing state and navigation across isolated iframe microfrontends without shared React state.",
+        solution: "Engineered a custom Messaging Service wrapper around window.postMessage and built a shared Customer Context Provider for cross-iframe event routing.",
       },
       {
-        challenge: "Performance with large workforce datasets",
-        solution: "Optimized React state management and rendering, and added server-side rendering with Next.js.",
+        challenge: "Integrating multiple external gaming and payment providers (Konami, GAN, IGT, Trustly) without tight coupling.",
+        solution: "Implemented the Adapter Microservice Pattern in NestJS to isolate external API changes and ensure reliable background processing via RabbitMQ.",
       },
     ],
     learnings: [
-      "Owning enterprise features end-to-end within Agile sprints.",
-      "Building maintainable, microservice-style backends with NestJS.",
+      "Designing resilient Microfrontend architectures with postMessage event bridges.",
+      "Building event-driven microservices with NestJS, RabbitMQ, and Adapter design patterns.",
     ],
-    roadmap: ["Gen-AI assisted scheduling suggestions.", "Expanded workforce analytics dashboards."],
+    roadmap: ["Gen-AI assisted workforce scheduling suggestions.", "Expanded real-time gaming analytics dashboards."],
   },
   {
     name: "K-12 Learning Platform",
@@ -383,7 +395,7 @@ export const projects: Project[] = [
   {
     name: "College Vidya Courses Portal",
     category: "Frontend · React",
-    blurb: "AI-Powered course matching and selection portal for online universities.",
+    blurb: "AI-Powered course search, university comparison, and selection portal for online degree programs.",
     role: "React JS Developer (Support)",
     timeline: "2020 — 2021",
     demo: "https://collegevidya.in/partner-online-courses/",
@@ -394,32 +406,33 @@ export const projects: Project[] = [
       { value: "AI-Powered", label: "SUGGESTIONS" },
     ],
     overview:
-      "College Vidya is an AI-powered course search and recommendation portal guiding students to suitable online and distance learning universities. As part of my support role, I contributed to form validations, responsiveness updates, and visual component layout enhancements.",
+      "College Vidya is an AI-powered course search and recommendation portal guiding students to accredited online and distance learning universities. Contributed reusable React.js UI components, client-side form validations, side-by-side university comparison layouts, and responsive UI enhancements.",
     problem:
-      "Students struggle to choose the best distance/online university due to a lack of transparent fee data, ratings, and course information across institutions.",
+      "Students struggle to evaluate online and distance universities due to fragmented fee structures, unverified ratings, and complex admission parameters across institutions.",
     features: [
-      { title: "AI-Powered Finder", description: "Asks questions and matches students with approved universities in 2 minutes." },
-      { title: "Dynamic Comparison", description: "Compares fees, credentials, and learning parameters of top universities side-by-side." },
-      { title: "Course Cataloging", description: "Displays available online MBA, MCA, and M.Com course curriculums and eligibility guidelines." },
+      { title: "Reusable UI Component Library", description: "Engineered modular React components for university cards, course listings, fee badges, and rating breakdowns." },
+      { title: "AI-Powered University Finder", description: "Interactive multi-step questionnaire matching students with UGC-approved universities based on budget and preferences." },
+      { title: "Side-by-Side Comparison", description: "Compares fees, EMI options, approval credentials, and course curriculums across top online universities." },
+      { title: "Multi-Step Lead Forms", description: "Designed step-by-step counselor inquiry forms with real-time client-side validation and error state handling." },
     ],
     tech: {
-      frontend: ["React", "JavaScript", "Bootstrap", "HTML5/CSS3"],
+      frontend: ["React", "JavaScript (ES6+)", "Bootstrap", "HTML5/CSS3"],
       backend: ["REST APIs"],
       database: ["MySQL"],
     },
     challenges: [
       {
-        challenge: "Developing smooth mobile layouts for course selection sliders and interactive modals.",
-        solution: "Configured clean CSS grid rules and responsive design properties using Bootstrap and vanilla styles.",
+        challenge: "Developing smooth mobile layouts for course selection sliders, comparison grids, and interactive modals.",
+        solution: "Engineered responsive CSS grid and flexbox structures using Bootstrap and modular custom styles.",
       },
       {
-        challenge: "Ensuring form inputs validate accurately across multiple steps of the matching process.",
-        solution: "Refined client-side validation logic and error feedback states in React to improve form submission rates.",
+        challenge: "Ensuring form inputs validate accurately across multiple steps of the student onboarding process.",
+        solution: "Implemented robust client-side validation logic and dynamic error feedback states in React to optimize lead form completions.",
       },
     ],
     learnings: [
-      "Translating Figma mockups into responsive React views under tight layouts.",
-      "Handling client-side input safety and verification structures across multi-step forms.",
+      "Designing modular, reusable React UI components for high-traffic educational portals.",
+      "Translating complex Figma mockups into responsive, accessible web views across mobile and desktop devices.",
     ],
     roadmap: ["Direct consultant chat support via dashboard integrations.", "University admission fee payment tracking widgets."],
   },
