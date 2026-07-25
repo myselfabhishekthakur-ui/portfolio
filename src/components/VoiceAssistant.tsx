@@ -92,12 +92,12 @@ WORK EXPERIENCE
 PROJECTS
 ========================
 
-Station Casinos Labor System (2021–2026):
-Enterprise workforce management platform for employee availability management, schedule creation, workforce planning, and labor-volume tracking.
-Features: Team Availability Management, Schedule Creation, Workforce Planning, Labor Data Tracking, Performance Optimization, SSR
-Technology: React.js, Next.js, Node.js, NestJS, MongoDB, MySQL, REST APIs
-Challenges: Migration from R Systems to GenAquarius, handling large workforce datasets, performance optimization
-Solutions: Optimized React rendering, improved state management, implemented Next.js SSR, ensured smooth platform migration
+Station Casinos Enterprise Management Platform (2021–2026):
+Enterprise casino management and workforce platform for 50,000+ users.
+Architecture & Features: Next.js Microfrontend architecture (Shell application hosting independent iframe modules), window.postMessage inter-iframe Messaging Service, NestJS event-driven microservices with RabbitMQ (Rating, Awards, Jackpot, Customer Sync), Adapter Microservices (Konami, GAN, IGT, Trustly, CaseIQ), Azure AD B2C auth with JWT access/refresh tokens, shared npm package, and runtime __ENV.js configuration.
+Technology: React, Next.js, TypeScript, Material UI, Redux Toolkit, PostMessage API, Node.js, NestJS, RabbitMQ, REST APIs (v1/v2/v3), MongoDB, MySQL, Azure AD B2C
+Challenges: Microfrontend state & navigation sync across iframes, 3rd-party integration decoupling
+Solutions: Custom window.postMessage Messaging Service wrapper, Customer Context Provider, NestJS Adapter Microservice Pattern
 
 K-12 Learning Platform (2021):
 Responsive e-learning platform built using React.js with reusable components, dynamic rendering, REST API integration.
