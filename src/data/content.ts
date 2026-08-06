@@ -317,7 +317,7 @@ export const projects: Project[] = [
     stats: [
       { value: "4+ Yrs", label: "PROJECT SPAN" },
       { value: "50,000+", label: "ACTIVE USERS" },
-      { value: "8+", label: "MICROSERVICES" },
+      { value: "30+", label: "MICROSERVICES" },
     ],
     overview:
       "An enterprise casino management and workforce platform for Station Casinos serving 50,000+ users. Architected using Next.js Microfrontends (Shell application hosting independent iframe modules) and an event-driven NestJS backend microservice architecture with RabbitMQ event queues.",
