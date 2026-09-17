@@ -112,6 +112,61 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    name: "Resellr.in",
+    category: "Full Stack · Re-Commerce Marketplace",
+    blurb: "India's modern verified re-commerce marketplace for inspected pre-owned tech, gear, and goods.",
+    role: "Full Stack Developer",
+    timeline: "2026",
+    demo: "https://resellr.in/",
+    images: [asset("/resellr-home.png"), asset("/resellr-browse.png")],
+    stats: [
+      { value: "50K+", label: "PRODUCTS" },
+      { value: "120+", label: "CITIES COVERED" },
+      { value: "100%", label: "VERIFIED LISTINGS" },
+    ],
+    overview:
+      "Resellr.in is a modern, community-driven re-commerce marketplace engineered for buying and selling inspected pre-owned electronics, tech gear, vehicles, and lifestyle goods across India. Built with Next.js, TypeScript, and Tailwind CSS, the platform features zero listing fees, geolocation-based local discovery, condition verification scores, fair price valuations, and safe peer-to-peer exchange workflows.",
+    problem:
+      "Existing second-hand classified platforms in India are plagued by rampant spam, fraudulent sellers, zero condition transparency, unverified listings, and awkward negotiations, leading to high transaction friction and buyer distrust.",
+    features: [
+      { title: "100% Verified Inspections", description: "Structured condition audits, transparency metrics, and authentic photo verification before listings go live." },
+      { title: "Geolocation & City Filtering", description: "Hyperlocal search and location-aware browsing across 120+ Indian cities and postal codes." },
+      { title: "Multi-Category Marketplace", description: "Granular browsing across Mobiles, Laptops, Cameras, Gaming, Audio, Vehicles, Bikes, Furniture, and Fashion." },
+      { title: "Fair Price Guarantee & Zero Fees", description: "Data-backed price benchmarks giving buyers 30–70% retail savings with no hidden platform commissions or listing fees." },
+      { title: "Streamlined Seller Flow", description: "Intuitive multi-step listing workflow with instant image upload, condition tagging, and price suggestions." },
+      { title: "Safe Exchange Protocols", description: "Identity-verified seller profiles, community trust ratings, and secure public meetup recommendations." },
+    ],
+    tech: {
+      frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Lucide Icons"],
+      backend: ["Node.js", "Next.js API Routes", "REST APIs"],
+      database: ["PostgreSQL"],
+    },
+    isPersonal: true,
+    challenges: [
+      {
+        challenge: "Enabling high-performance hyperlocal product discovery across dynamic category filters without high database latency.",
+        solution: "Designed composite database indexing strategies on location geohashes and category tags, paired with client-side query caching and debounced keyword search.",
+      },
+      {
+        challenge: "Ensuring trust and minimizing counterfeit or misclassified item listings.",
+        solution: "Architected a multi-step verification pipeline requiring standardized condition checklists, upload validations, and seller authentication badges.",
+      },
+      {
+        challenge: "Optimizing responsive image loading and web performance across mobile devices on low-bandwidth networks.",
+        solution: "Implemented Next.js Image optimization, modern WebP asset compression, lazy loading below-the-fold cards, and CSS hardware-accelerated animations.",
+      },
+    ],
+    learnings: [
+      "Designing trustworthy two-sided marketplace dynamics and friction-free re-commerce seller onboarding.",
+      "Fine-tuning Next.js App Router performance, image pipelines, and client-side state caching for fast browsing.",
+      "Implementing location-aware filtering and responsive mobile-first UI patterns for Indian consumers.",
+    ],
+    roadmap: [
+      "In-app escrow payments and doorstep courier pickup & delivery integration.",
+      "AI-powered automated image condition grading and instant price estimation model.",
+    ],
+  },
+  {
     name: "CVCraft",
     category: "Full Stack · SaaS",
     blurb: "Online CV Maker & Resume Builder with real-time editing and PDF exports.",
