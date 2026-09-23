@@ -535,6 +535,7 @@ export const skills: SkillGroup[] = [
       { name: "PostgreSQL", icon: icon("postgresql") },
       { name: "GraphQL", icon: icon("graphql", "plain") },
       { name: "RabbitMQ", icon: icon("rabbitmq") },
+      { name: "Kafka", icon: icon("apachekafka") },
       { name: "REST APIs" },
     ],
   },

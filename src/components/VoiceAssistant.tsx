@@ -45,7 +45,7 @@ He specializes in building scalable web applications, enterprise platforms, micr
 His core expertise includes:
 
 Frontend: React.js, Next.js, Vue.js, Tailwind CSS, Material UI, Bootstrap, Sass/SCSS
-Backend: Node.js, NestJS, REST APIs, GraphQL, RabbitMQ
+Backend: Node.js, NestJS, REST APIs, GraphQL, RabbitMQ, Kafka
 Databases: PostgreSQL, MongoDB, MySQL
 Cloud & Tools: Azure DevOps, AWS, Git, Postman, Jest, VS Code
 Generative AI: LLM Applications, RAG Systems, AI Agents, Semantic Search, Document Intelligence
@@ -550,7 +550,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       } else if (topic === "experience") {
         // After experience → give skills
         lastTopicRef.current = "skills";
-        answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know about his projects?";
+        answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, RabbitMQ, and Kafka. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know about his projects?";
       } else if (topic === "skills") {
         // After skills → give projects
         lastTopicRef.current = "projects";
@@ -599,7 +599,7 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       query.includes("expertise")
     ) {
       lastTopicRef.current = "skills";
-      answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, and RabbitMQ. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know more about his personal interests?";
+      answer = "Abhishek has a strong technical stack. On the frontend he works with React.js, Next.js, Vue.js, Tailwind CSS, Material UI, and Bootstrap. On the backend he uses Node.js, NestJS, REST APIs, GraphQL, RabbitMQ, and Kafka. His database expertise covers PostgreSQL, MongoDB, and MySQL. He has cloud experience with Azure DevOps and AWS, and works with Generative AI technologies including LLM applications, RAG systems, AI Agents, and Semantic Search. Would you like to know more about his personal interests?";
       matchedLocally = true;
     }
     // Experience (English)
