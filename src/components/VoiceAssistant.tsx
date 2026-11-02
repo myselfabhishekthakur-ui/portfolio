@@ -92,6 +92,10 @@ WORK EXPERIENCE
 PROJECTS
 ========================
 
+Speakly (2026):
+Real-time browser-based platform for practicing spoken English with live 1-on-1 audio calls, live audio rooms, and private AI Copilot hints ("Think it in Hindi, say it in English"). Built using React, Next.js, TypeScript, Tailwind CSS, WebRTC, Web Audio API, and Web Workers.
+Challenge & Architecture: Solved mobile OS aggressive background tab suspension (which cuts microphone and audio streams when screen locks or apps switch) by designing a multi-layered resilience architecture: a dedicated Web Worker for unthrottled heartbeats, an unthrottled silent audio loop via Web Audio API to keep native hardware audio sessions continuously engaged, and a document.visibilitychange lifecycle hook for seamless automatic WebRTC track renegotiation without dropping active calls.
+
 Station Casinos Enterprise Management Platform (2021–2026):
 Enterprise casino management and workforce platform for 50,000+ users.
 Architecture & Features: Next.js Microfrontend architecture (Shell application hosting independent iframe modules), window.postMessage inter-iframe Messaging Service, NestJS event-driven microservices with RabbitMQ (Rating, Awards, Jackpot, Customer Sync), Adapter Microservices (Konami, GAN, IGT, Trustly, CaseIQ), Azure AD B2C auth with JWT access/refresh tokens, shared npm package, and runtime __ENV.js configuration.
@@ -611,13 +615,19 @@ Do NOT automatically talk about singing, guitar, Indian Idol, travel, or persona
       answer = "Abhishek has 6+ years of software engineering experience. At GenAquarius he worked as a Full Stack Developer building web applications, integrating LLM/RAG features, and building an interactive chatbot. At R Systems he spent nearly 4 years delivering enterprise casino management systems using React, Next.js, Node.js, and NestJS with Azure DevOps CI/CD. He also worked on contract projects including e-commerce and course portals, and started his web development career at Virtual Employee and Young & Shand Technologies. Would you like to know more about his personal interests outside the IT sector?";
       matchedLocally = true;
     }
+    // Speakly Project
+    else if (query.includes("speakly")) {
+      lastTopicRef.current = "projects";
+      answer = "Speakly is a real-time web platform built by Abhishek for practicing spoken English via in-browser 1-on-1 WebRTC audio calls and live rooms without native apps. It features a private AI Copilot for real-time Hindi-to-English hints, proficiency matching, and a multi-layered resilience architecture using Web Workers, silent audio loops, and visibility lifecycle hooks to keep audio alive when mobile screens lock. Would you like to know more about his other projects or skills?";
+      matchedLocally = true;
+    }
     // Projects (English)
     else if (
       query.includes("project") || query.includes("casino") || query.includes("station") ||
       query.includes("k-12") || query.includes("built") || query.includes("worked on")
     ) {
       lastTopicRef.current = "projects";
-      answer = "Abhishek's flagship project is the Station Casinos Labor System — an enterprise workforce management platform handling employee scheduling, availability, and labor-volume tracking for thousands of users, built with React.js, Next.js, Node.js, NestJS, MongoDB, and MySQL. He has also worked on Generative AI projects including LLM integrations, RAG implementations, and AI Assistants. Would you like to know about his personal interests?";
+      answer = "Abhishek has built notable enterprise and consumer platforms. His enterprise flagship is the Station Casinos Labor System for 50,000+ users. He also built Speakly — a real-time in-browser English speaking platform with WebRTC audio calls and an AI Copilot — as well as Resellr.in, CVCraft, and Teleprompt Pro. Would you like to know about his personal interests?";
       matchedLocally = true;
     }
     // Contact (English)

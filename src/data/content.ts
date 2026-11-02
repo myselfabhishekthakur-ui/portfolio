@@ -112,6 +112,84 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    name: "Speakly",
+    category: "Full Stack · Real-Time WebRTC & AI",
+    blurb: "Real-time in-browser English speaking practice platform with 1-on-1 audio calls, live audio rooms, and private AI Copilot assistance.",
+    role: "Full Stack Developer",
+    timeline: "2026",
+    demo: "https://www.speakly.co.in/",
+    images: [
+      asset("/speakly-home.png"),
+      asset("/speakly-matching.png"),
+      asset("/speakly-dashboard.jpg"),
+      asset("/speakly-live-stage.png"),
+    ],
+    stats: [
+      { value: "1-on-1 & Rooms", label: "LIVE AUDIO CALLS" },
+      { value: "AI Copilot", label: "IN-CALL TRANSLATION" },
+      { value: "Zero-Install", label: "IN-BROWSER WEBRTC" },
+    ],
+    overview:
+      "Speakly is a real-time web platform engineered for practicing spoken English with learners across India. Centered on the philosophy 'Think it in Hindi, say it in English', the platform connects users for live 1-on-1 audio calls and multi-seat audio rooms directly inside mobile and desktop web browsers without requiring native app downloads. It features proficiency-based peer matchmaking, an in-call private AI Copilot providing on-the-fly Hindi-to-English translation and sentence prompts, live text chat with emoji reactions, and progress tracking.",
+    problem:
+      "English learners face significant anxiety, hesitation when mentally translating thoughts from their native language, and a lack of daily speaking partners. Additionally, forcing learners to install native apps creates high onboarding friction. The core engineering hurdle was delivering an uninterrupted real-time audio experience inside mobile browsers: mobile operating systems (iOS and Android) aggressively throttle or suspend background browser tabs to save battery, which immediately cuts the microphone and WebRTC audio stream whenever users lock their phone screen or switch between apps.",
+    features: [
+      {
+        title: "In-Browser 1-on-1 Voice Calls",
+        description: "Zero-install WebRTC audio calls directly in mobile and desktop browsers with low latency and crystal-clear audio.",
+      },
+      {
+        title: "Real-Time AI Speaking Copilot",
+        description: "Private in-call assistant that translates thoughts from Hindi to natural English phrasing and provides hints visible only to the speaker.",
+      },
+      {
+        title: "Live Audio Rooms & Multi-Seat Stage",
+        description: "Interactive voice rooms featuring a 4-seat live stage, host moderation, hand-raising, and open learner slots.",
+      },
+      {
+        title: "Proficiency-Based Matchmaking",
+        description: "Dynamic radar-assisted matchmaking algorithm that pairs learners with partners at compatible English proficiency levels.",
+      },
+      {
+        title: "In-Room Live Chat & Reactions",
+        description: "Integrated real-time text chat, presence indicators, and emoji reactions alongside active voice conversations.",
+      },
+      {
+        title: "Progress & Daily Streak Tracking",
+        description: "Comprehensive fluency dashboard monitoring daily streaks, weekly talk time, total completed calls, and CEFR level progression.",
+      },
+    ],
+    tech: {
+      frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS", "WebRTC", "Web Audio API", "Web Workers"],
+      backend: ["Node.js", "WebSocket / Socket.io", "WebRTC Signaling", "REST APIs"],
+      database: ["PostgreSQL", "Redis"],
+    },
+    isPersonal: true,
+    challenges: [
+      {
+        challenge: "Mobile OS background tab suspension: iOS and Android aggressively throttle background browser tabs to conserve battery, abruptly muting the microphone and terminating WebRTC peer audio streams when users lock their screen or switch apps.",
+        solution: "Engineered a multi-layered resilience architecture: deployed a dedicated Web Worker to maintain critical application heartbeats outside the throttled main thread, leveraged an unthrottled silent audio loop via Web Audio API to keep native hardware audio sessions continuously engaged, and implemented an automatic microphone recovery lifecycle hook using document.visibilitychange to renegotiate WebRTC media tracks seamlessly without dropping active calls.",
+      },
+      {
+        challenge: "Maintaining low-latency peer-to-peer audio quality across unpredictable mobile network conditions and restrictive NAT/firewalls across India.",
+        solution: "Architected an optimized WebRTC signaling pipeline with STUN/TURN fallback mechanisms, combined with dynamic jitter buffer management and adaptive Opus bitrate constraints to guarantee stable audio over spotty 4G and 3G cellular connections.",
+      },
+      {
+        challenge: "Delivering real-time AI assistance during live conversations without creating audio latency, distraction, or conversation interruption.",
+        solution: "Created an isolated client-side Copilot streaming interface that translates Hindi thoughts into natural English prompts in real-time, displaying private visual suggestions without interrupting the ongoing voice call.",
+      },
+    ],
+    learnings: [
+      "Architecting resilient WebRTC media sessions that survive aggressive mobile OS lifecycle and background throttling constraints.",
+      "Engaging device-level hardware audio contexts using silent audio loops and Web Audio API techniques for background playback continuity.",
+      "Designing low-friction, anxiety-free real-time communication tools for second-language learners.",
+    ],
+    roadmap: [
+      "AI-driven post-call pronunciation, vocabulary, and grammar feedback scorecards.",
+      "Automated topic prompt generators for live group audio rooms.",
+    ],
+  },
+  {
     name: "Resellr.in",
     category: "Full Stack · Re-Commerce Marketplace",
     blurb: "India's modern verified re-commerce marketplace for inspected pre-owned tech, gear, and goods.",
