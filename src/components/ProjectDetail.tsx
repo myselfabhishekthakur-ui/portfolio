@@ -44,15 +44,24 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
       {/* Screenshots */}
       {project.images.length > 0 && (
-        <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <div className="mb-8 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
           {project.images.map((src, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <a
               key={i}
-              src={src}
-              alt={`${project.name} screenshot ${i + 1}`}
-              className="w-full rounded-xl border border-line"
-            />
+              href={src}
+              target="_blank"
+              rel="noreferrer"
+              className="group relative block overflow-hidden rounded-xl border border-line bg-[#fafafa] p-1.5 shadow-sm transition-all hover:border-ink/30 hover:shadow-md cursor-zoom-in"
+              title="Click to view full size"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={src}
+                alt={`${project.name} screenshot ${i + 1}`}
+                className="max-h-[220px] sm:max-h-[260px] w-auto max-w-full rounded-lg object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                loading="lazy"
+              />
+            </a>
           ))}
         </div>
       )}
